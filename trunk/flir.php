@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.5.0
+Version: 0.5.5
 Author URI: http://www.23systems.net/
 */
 global $flir_path, $facelift_path, $flir_fonts,$fonts;
@@ -86,7 +86,7 @@ if (!class_exists('wp_flir')) {
 		
 			?>
 			<div class="wrap alternate">
-			<h2><?php _e('FLIR for WordPress Configuration (v0.5.0 / Facelift v1.2b)','FLIR'); ?></h2>
+			<h2><?php _e('FLIR for WordPress Configuration (v0.5.5 / Facelift v1.2b)','FLIR'); ?></h2>
 			<form action="?page=FLIR" method="post" id="flir_options" name="flir_options">
 <!--            <h3><?php // _e('Default Font',"FLIR"); ?>: </h3>
                <select name="flir_fonts">
@@ -206,44 +206,48 @@ if (!class_exists('wp_flir')) {
 		} 
    
    	/*---- load JavaScripts scripts ----*/
-   	function add_scripts(){
-   	  global $facelift_path;
-         wp_enqueue_script("prototype");
-   		wp_enqueue_script('flir_script', $facelift_path.'flir.js', array("prototype") , 0.1);
+        function add_scripts(){
+            global $facelift_path;
+            wp_enqueue_script("jquery");
+            wp_enqueue_script('flir_script', $facelift_path.'flir.js', array("jquery") , 0.1);
    	}
    
    	/*---- Called by the action wp_footer ----*/
-      function wp_footer_intercept(){
-   	  global $facelift_path;
-         if (!empty($this->adminOptions)) {
-   		   $flir_options = $this->getAdminOptions();
-            $flir_elements = $flir_options['elements'];
-   		   $flir_elements_fonts = $flir_options['fonts'];
-            $flir_elements_mode = $flir_options['mode'];
-            $flir_default_mode = $flir_options['defaultmode'];
-		   }
-         echo '<script type="text/javascript">'.$this->eol();
-   		echo "FLIR.init({path:'$facelift_path'},new FLIRStyle({mode:'".$flir_default_mode."'}));".$this->eol();
-	      if (!empty($flir_elements)) {
-		       foreach ($flir_elements as $key => $value) {
-//               echo "FLIR.replace(document.getElementsByTagName('".$value."'), new FLIRStyle({cFont:'".$flir_elements_fonts[$key]."'}));".$this->eol();
-               echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\'})); } );'.$this->eol();
+        function wp_footer_intercept(){
+            global $facelift_path;
 
-			    }
-		    }
-		    else {
-   		echo "FLIR.auto();".$this->eol();
-   		}
-   		echo '</script>;'.$this->eol();
-   	}
+            if (!empty($this->adminOptions)) {
+                $flir_options = $this->getAdminOptions();
+                $flir_elements = $flir_options['elements'];
+                $flir_elements_fonts = $flir_options['fonts'];
+                $flir_elements_mode = $flir_options['mode'];
+                $flir_default_mode = $flir_options['defaultmode'];
+            }
+
+            echo '<script type="text/javascript">'.$this->eol();
+            echo "FLIR.init({path:'$facelift_path'},new FLIRStyle({mode:'".$flir_default_mode."'}));".$this->eol();
+            if (!empty($flir_elements)) {
+                echo 'jQuery(function($){'.$this->eol();
+                echo '    $(document).ready(function(){'.$this->eol();
+                foreach ($flir_elements as $key => $value) {
+                    echo '    $("'.$value.'").each( function() { FLIR.replace(this, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\'}));});'.$this->eol();
+                }
+                echo '    });'.$this->eol();
+                echo '});'.$this->eol();
+            }
+            else {
+                echo "FLIR.auto();".$this->eol();
+            }
+            echo '</script>;'.$this->eol();
+        }
    	
    	/*---- Adds a link to the stylesheet to the header ----*/
 		function add_css(){
-         echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/style.css" type="text/css" media="screen" />'.$this->eol();
+            echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/style.css" type="text/css" media="screen" />'.$this->eol();
 		}
 		
-		function add_admin_css() {
-         echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/admin.css" />'.$this->eol();
+        function add_admin_css() {
+            echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/admin.css" />'.$this->eol();
       }
       
       /*---- Create clean eols for source ----*/
