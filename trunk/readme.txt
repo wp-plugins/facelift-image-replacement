@@ -12,23 +12,34 @@ Facelift Image Replacment is a script that generates image representations of te
 
 FLIR for WordPress implements Facelife Image Replacement by Cory Mawhorter.  It is currently in early development but is usable at this time with some manual configuration.  Several freeware fonts are provided with FLIR for WordPress
 
-Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement script that dynamically generates image representations of text on your web page in fonts that otherwise might not be visible to your visitors. The generated image will be automatically inserted into your web page via Javascript and visible to all modern browsers. Any element with text can be replaced: from headers (<h1>, <h2>, etc.) to <span> elements and everything in between!
+Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement script that dynamically generates image representations of text on your web page in fonts that otherwise might not be visible to your visitors. The generated image will be automatically inserted into your web page via Javascript and visible to all modern browsers. Any element with text can be replaced: from headers (&gt;h1&lt;, &gt;h2&lt;, etc.) to <span> elements and everything in between!
 
 You can see examples of what it does here: <a href="http://facelift.mawhorter.net/examples/">http://facelift.mawhorter.net/examples/</a>
 
 == Installation ==
 
+= Delete your existing version before installing this version =
+
 1. Extract to your `wp-content/plugins` directory.
-2. Look in `wp-content/plugins/flir/facelift`
-3. Set the `wp-content/plugins/flir/facelift/cache` to be writable
-4. Add fonts of your choice to `wp-content/plugins/flir/facelift/fonts` folder
+2. Look in `wp-content/plugins/facelift-image-replacement/facelift`
+3. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable
+4. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
 5. Open `config-flir.php` and customize to your liking. All the variables and options are explained in-depth inside the file.
 6. Activate plugin in WordPress admin panel
 7. Customize tags for FLIR on FLIR submenu under the Design menu
 
-* Plugins are not implemented yet.
+= Notes =
+
+* Plugins are not implemented yet
+* Completely delete any old verions before upgrading as this plugin is under rapid development
+* You cannot auto-upgrade from version 0.3.0
+* Detailed instruction on the admin panel coming soon 
 
 == Frequently Asked Questions ==
+
+= It doesn't work =
+
+The most common reason for it not working is that your cache directory is not writable or does not exist.  Please ensure that you have a cahve directory at `wp-content/plugins/facelift-image-replacement/facelift/cache` and that it is writable.
 
 = Will FLIR be configurable from the admin panel? =
 
