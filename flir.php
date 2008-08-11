@@ -4,15 +4,15 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.4
+Version: 0.4.1
 Author URI: http://www.23systems.net/
 */
 global $flir_path, $facelift_path, $flir_fonts,$fonts;
 
 require('facelift/config-flir.php');
 
-$flir_path = 'wp-content/plugins/flir';
-$facelift_path = '/wp-content/plugins/flir/facelift/';
+$flir_path = 'wp-content/plugins/facelift-image-replacement';
+$facelift_path = '/wp-content/plugins/facelift-image-replacement/facelift/';
 $flir_fonts = $fonts;
 
 if (!class_exists('wp_flir')) {
@@ -186,11 +186,11 @@ if (!class_exists('wp_flir')) {
    	
    	/*---- Adds a link to the stylesheet to the header ----*/
 		function add_css(){
-         echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/flir/css/style.css" type="text/css" media="screen" />'.$this->eol();
+         echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/style.css" type="text/css" media="screen" />'.$this->eol();
 		}
 		
 		function add_admin_css() {
-         echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/flir/css/admin.css" />'.$this->eol();
+         echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/admin.css" />'.$this->eol();
       }
       
       /*---- Create clean eols for source ----*/

@@ -4,7 +4,7 @@ Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.5
 Tested up to: 2.6
-Stable tag: 0.4
+Stable tag: 0.4.1
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
