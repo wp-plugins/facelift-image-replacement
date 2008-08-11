@@ -39,25 +39,25 @@ define('FONT_DISCOVERY', 			false);
 // Each font you want to use should have an entry in the fonts array.
 $fonts = array();
 $fonts['tribalbenji'] 	= 'Tribal_Font.ttf';
-$fonts['antagea'] 		= 'Antagea.ttf';
+$fonts['antagea'] 		  = 'Antagea.ttf';
 $fonts['illuminating'] 	= 'ArtOfIlluminating.ttf';
-$fonts['bentham'] 		= 'Bentham.otf';
-$fonts['geo'] 				= 'Geo_Oblique.otf';
-$fonts['puritan'] 		= 'Puritan_Regular.otf';
+$fonts['bentham'] 		  = 'Bentham.ttf';
+$fonts['geo'] 				  = 'Geo_Oblique.ttf';
+$fonts['puritan'] 		  = 'Puritan_Regular.ttf';
 $fonts['konstytucyja'] 	= 'Konstytucyja_1.ttf';
 $fonts['promocyja'] 		= 'Promocyja.ttf';
 $fonts['stunfilla'] 		= 'OPN_StunFillaWenkay.ttf';
 $fonts['animaldings'] 	= 'Animal_Silhouette.ttf';
-$fonts['audimat'] 	   = 'AUdimat_Regular.otf';
-$fonts['diavlo'] 		   = 'Diavlo_Book.otf';
-$fonts['existence'] 	   = 'Existence_Light.otf';
-$fonts['qlassik'] 		= 'Qlassik_TB.otf';
-$fonts['yanone'] 			= 'YanoneKaffeesatz_Regular.otf';
-$fonts['baars'] 		   = 'baars_sophia.ttf';
-$fonts['comfort'] 	   = 'com4t.ttf';
+$fonts['audimat'] 	    = 'AUdimat_Regular.ttf';
+$fonts['diavlo'] 		    = 'Diavlo_Book.ttf';
+$fonts['existence'] 	  = 'Existence_Light.ttf';
+$fonts['qlassik'] 		  = 'Qlassik_TB.ttf';
+$fonts['yanone'] 			  = 'YanoneKaffeesatz_Regular.ttf';
+$fonts['baars'] 		    = 'baars_sophia.ttf';
+$fonts['comfort'] 	    = 'com4t.ttf';
 $fonts['cosmetica'] 		= 'MgOpenCosmeticaRegular.ttf';
-$fonts['marlon'] 		   = 'Marlonbk.ttf';
-$fonts['steiner'] 	   = 'Steinerlight.ttf';
+$fonts['marlon'] 		    = 'Marlonbk.ttf';
+$fonts['steiner'] 	    = 'Steinerlight.ttf';
 
 // The font will default to the following (put your most common font here).
 $fonts['default'] 		= $fonts['puritan'];
