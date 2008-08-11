@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.4.1
+Version: 0.5.0
 Author URI: http://www.23systems.net/
 */
 global $flir_path, $facelift_path, $flir_fonts,$fonts;
@@ -64,22 +64,29 @@ if (!class_exists('wp_flir')) {
 		/*---- Outputs the HTML for the admin sub page. ----*/
 		function output_sub_admin_page_0(){
 		global $flir_path, $facelift_path, $flir_fonts;
+		
+		$flir_modes = array();
+		$flir_modes[1] = 'static';
+		$flir_modes[2] = 'progressive';
+		$flir_modes[3] = 'wrap';
+		
 		if ( $_POST['action'] ) {
 		 $flir_elements = $_POST[flir_elements];
-		 $flir_element_fonts = $_POST[flir_element_fonts];
-		 $flir_mode =  $_POST[flir_mode];
+		 $flir_elements_fonts = $_POST[flir_element_fonts];
+		 $flir_elements_mode = $_POST[flir_mode];
+		 $flir_default_mode = $_POST[flir_default_mode];
 		
-/*		 echo "Elements: ".$flir_elements."<br />";
-		 echo "Fonts: ".$flir_element_fonts."<br />";
-		 echo "Mode: ".$flir_mode."<br />";
-*/		
-		 $this->adminOptions = array("elements" =>  $flir_elements, "fonts" => $flir_element_fonts,"mode" => $flir_mode);
+/*   	 echo "Elements: ".$flir_elements."<br />";
+		 echo "Fonts: ".$flir_elements_fonts."<br />";
+		 echo "Mode: ".$flir_elements_mode."<br />"; */
+	
+		 $this->adminOptions = array("elements" =>  $flir_elements, "fonts" => $flir_elements_fonts,"mode" => $flir_elements_mode,"defaultmode" =>$flir_default_mode);
 		 $this->saveAdminOptions();
 		}
 		
 			?>
 			<div class="wrap alternate">
-			<h2><?php _e('FLIR for WordPress Configuration (v0.4/Facelift v1.2b)','FLIR'); ?></h2>
+			<h2><?php _e('FLIR for WordPress Configuration (v0.5.0 / Facelift v1.2b)','FLIR'); ?></h2>
 			<form action="?page=FLIR" method="post" id="flir_options" name="flir_options">
 <!--            <h3><?php // _e('Default Font',"FLIR"); ?>: </h3>
                <select name="flir_fonts">
@@ -89,8 +96,9 @@ if (!class_exists('wp_flir')) {
          if (!empty($this->adminOptions)) {
    		   $flir_options = $this->getAdminOptions();
             $flir_elements = $flir_options['elements'];
-   		   $flir_element_fonts = $flir_options['fonts'];
-            $flir_mode = $flir_options['mode'];
+   		   $flir_elements_fonts = $flir_options['fonts'];
+            $flir_elements_mode = $flir_options['mode'];
+            $flir_default_mode = $flir_options['defaultmode'];
 		   }
                   ?>
             <h3><?php _e('Elements to Replace',"FLIR"); ?>: </h3>
@@ -100,52 +108,96 @@ if (!class_exists('wp_flir')) {
                <th scope="col">Element</th>
                <th scope="col">Use</th>
                <th scope="col">Font</th>
+               <th scope="col">Mode</th>
                <th scope="col">Effect</th>
             </tr>
             </thead>
             <tr>
-               <td>Heading 1</td><td><input type="checkbox" name="flir_elements[1]" value="h1"<?php if ($flir_elements[1]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[1]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[1]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Heading 1</td><td><input type="checkbox" name="flir_elements[1]" value="h1"<?php if ($flir_elements[1]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[1]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[1]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[1]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[1]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
+               <td>Forthcoming</td>
+            </tr>
+            <tr>
+               <td>Heading 2</td><td><input type="checkbox" name="flir_elements[2]" value="h2"<?php if ($flir_elements[2]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[2]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[2]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[2]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[2]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Heading 2</td><td><input type="checkbox" name="flir_elements[2]" value="h2"<?php if ($flir_elements[2]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[2]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[2]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Heading 3</td><td><input type="checkbox" name="flir_elements[3]" value="h3"<?php if ($flir_elements[3]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[3]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[3]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[3]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[3]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Heading 3</td><td><input type="checkbox" name="flir_elements[3]" value="h3"<?php if ($flir_elements[3]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[3]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[3]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Heading 4</td><td><input type="checkbox" name="flir_elements[4]" value="h4"<?php if ($flir_elements[4]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[4]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[4]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[4]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[4]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Heading 4</td><td><input type="checkbox" name="flir_elements[4]" value="h4"<?php if ($flir_elements[4]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[4]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[4]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Heading 5</td><td><input type="checkbox" name="flir_elements[5]" value="h5"<?php if ($flir_elements[5]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[5]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[5]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[5]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[5]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>               
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Heading 5</td><td><input type="checkbox" name="flir_elements[5]" value="h5"<?php if ($flir_elements[5]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[5]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[5]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Heading 6</td><td><input type="checkbox" name="flir_elements[6]" value="h6"<?php if ($flir_elements[6]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[6]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[6]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[6]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[6]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Heading 6</td><td><input type="checkbox" name="flir_elements[6]" value="h6"<?php if ($flir_elements[6]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[6]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[6]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Small</td><td><input type="checkbox" name="flir_elements[7]" value="small"<?php if ($flir_elements[7]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[7]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[7]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[7]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[7]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Small</td><td><input type="checkbox" name="flir_elements[7]" value="small"<?php if ($flir_elements[7]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[7]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[7]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Strong / Bold </td><td><input type="checkbox" name="flir_elements[8]" value="strong"<?php if ($flir_elements[8]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[8]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[8]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[8]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[8]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
             <tr>
-               <td>Strong / Bold </td><td><input type="checkbox" name="flir_elements[8]" value="strong"<?php if ($flir_elements[8]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[8]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[8]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
-               <td>&nbsp;</td>
-            </tr>
-            <tr>
-               <td>Emphasis / Italic </td><td><input type="checkbox" name="flir_elements[9]" value="em"<?php if ($flir_elements[9]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[9]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_element_fonts[9]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>Emphasis / Italic </td><td><input type="checkbox" name="flir_elements[9]" value="em"<?php if ($flir_elements[9]) echo ' checked="checked"';?> /></td><td><select name="flir_element_fonts[9]"><option value="">N/A</option><?php if (!empty($flir_fonts)) {foreach ( $flir_fonts as $key=>$value) {echo '<option ';if ($flir_elements_fonts[9]==$key) echo 'selected="selected" ';echo 'value="'.$key.'">'.ucfirst($key).'</option>';}}?></select></td>
+               <td>
+                  <select name="flir_mode[9]">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_elements_mode[9]==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
+               </td>
                <td>&nbsp;</td>
             </tr>
          </table>
-         <h3><?php _e('Mode',"FLIR"); ?>: </h3>
-            <select name="flir_mode">
-               <option value="static"<?php if ($flir_mode=='static') echo ' selected="selected"';?>>Static</option>
-               <option value="progessive"<?php if ($flir_mode=='progessive') echo ' selected="selected"';?>>Progressive</option>
-               <option value="wrap"<?php if ($flir_mode=='wrap') echo ' selected="selected"';?>>Wrap</option>
-            </select>
+         <h3><?php _e('Default Mode',"FLIR"); ?>: </h3>
+                  <select name="flir_default_mode">
+                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_default_mode==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                  </select>
          <p class="submit"><input type="submit" class="btn" name="save" style="padding:5px 30px 5px 30px;" value="<?php _e('Save Configuration',"FLIR"); ?>" /></p>
 				<input type="hidden" name="action" value="action" />
          </form>
@@ -166,15 +218,16 @@ if (!class_exists('wp_flir')) {
          if (!empty($this->adminOptions)) {
    		   $flir_options = $this->getAdminOptions();
             $flir_elements = $flir_options['elements'];
-   		   $flir_element_fonts = $flir_options['fonts'];
-            $flir_mode = $flir_options['mode'];
+   		   $flir_elements_fonts = $flir_options['fonts'];
+            $flir_elements_mode = $flir_options['mode'];
+            $flir_default_mode = $flir_options['defaultmode'];
 		   }
          echo '<script type="text/javascript">'.$this->eol();
-   		echo "FLIR.init({path:'$facelift_path'},new FLIRStyle({mode:'".$flir_mode."'}));".$this->eol();
+   		echo "FLIR.init({path:'$facelift_path'},new FLIRStyle({mode:'".$flir_default_mode."'}));".$this->eol();
 	      if (!empty($flir_elements)) {
 		       foreach ($flir_elements as $key => $value) {
-//               echo "FLIR.replace(document.getElementsByTagName('".$value."'), new FLIRStyle({cFont:'".$flir_element_fonts[$key]."'}));".$this->eol();
-               echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$flir_mode.'\',cFont:\''.$flir_element_fonts[$key].'\'})); } );'.$this->eol();
+//               echo "FLIR.replace(document.getElementsByTagName('".$value."'), new FLIRStyle({cFont:'".$flir_elements_fonts[$key]."'}));".$this->eol();
+               echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\'})); } );'.$this->eol();
 
 			    }
 		    }
