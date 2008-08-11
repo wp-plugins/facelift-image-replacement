@@ -12,7 +12,7 @@ Facelift Image Replacment is a script that generates image representations of te
 
 FLIR for WordPress implements Facelife Image Replacement by Cory Mawhorter.  It is currently in early development but is usable at this time with some manual configuration.  Several freeware fonts are provided with FLIR for WordPress
 
-Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement script that dynamically generates image representations of text on your web page in fonts that otherwise might not be visible to your visitors. The generated image will be automatically inserted into your web page via Javascript and visible to all modern browsers. Any element with text can be replaced: from headers (`&lt;h1&gt;`, `&lt;h2&gt;`, etc.) to `&lt;span&gt;` elements and everything in between!
+Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement script that dynamically generates image representations of text on your web page in fonts that otherwise might not be visible to your visitors. The generated image will be automatically inserted into your web page via Javascript and visible to all modern browsers. Any element with text can be replaced: from headers (`<h1>`, `<h2>`, etc.) to `<span>` elements and everything in between!
 
 You can see examples of what it does here: <a href="http://facelift.mawhorter.net/examples/">http://facelift.mawhorter.net/examples/</a>
 
@@ -33,7 +33,13 @@ You can see examples of what it does here: <a href="http://facelift.mawhorter.ne
 * Plugins are not implemented yet
 * Completely delete any old verions before upgrading as this plugin is under rapid development
 * You cannot auto-upgrade from version 0.3.0
-* Detailed instruction on the admin panel coming soon 
+* Detailed instruction on the admin panel coming soon
+* Text remains intact in source so search engines see your page as text!
+
+== Screenshots ==
+
+1. Before Facelift Image Replacement
+2. After Facelift Image Replacement
 
 == Frequently Asked Questions ==
 
