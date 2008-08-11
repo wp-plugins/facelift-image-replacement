@@ -72,34 +72,7 @@ All the fonts that come with FLIR are either free or Open Source.
 
 = 0.4.1 =
 
-Updated
-
-= 0.4.0 =
-
-* Basic admin functionality added
-* Implemented prototype in plugin for per element rendering
-* Updated Facelift to 1.2b
-
-= 0.3.0 =
-
-* Initial Release
-* Auto redering of <h1> to <h5> only
-* Using Facelift 1.1
-
-== Next Features ==
-
-= 0.5.5 =
-
-* Removed prototype implementation in favor of jQuery, noticeable improvement in speed.
-* Bug with IE in rendering header in some cases
-
-= 0.5.0 =
-
-* Added per element modes
-
-= 0.4.1 =
-
-* Updated something that I can't remember now
+* Updated something but I can't remember what it was
 
 = 0.4.0 =
 
@@ -112,3 +85,10 @@ Updated
 * Initial Release
 * Auto redering of `<h1>` to `<h5>` only
 * Using Facelift 1.1
+
+== Upcoming Features ==
+
+* Configuration of Facelift from admin panel ~v0.7
+* User defined element replacement ~v0.8
+* Quick Effects (require ImageMagick)
+* More...
