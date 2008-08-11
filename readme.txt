@@ -4,7 +4,7 @@ Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.5
 Tested up to: 2.6
-Stable tag: 0.5.0
+Stable tag: 0.5.5
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -59,6 +59,56 @@ Yes, eventually they will.  They will require ImageMagick 6.3.7 or higher to fun
 
 All the fonts that come with FLIR are either free or Open Source.
 
-== Screenshots ==
+== Changelog ==
 
-None at present
+= 0.5.5 =
+
+* Removed prototype implementation in favor of jQuery, noticeable improvement in speed.
+* Bug with IE in rendering header in some cases not jQuery related
+
+= 0.5.0 =
+
+* Added per element modes
+
+= 0.4.1 =
+
+Updated
+
+= 0.4.0 =
+
+* Basic admin functionality added
+* Implemented prototype in plugin for per element rendering
+* Updated Facelift to 1.2b
+
+= 0.3.0 =
+
+* Initial Release
+* Auto redering of <h1> to <h5> only
+* Using Facelift 1.1
+
+== Next Features ==
+
+= 0.5.5 =
+
+* Removed prototype implementation in favor of jQuery, noticeable improvement in speed.
+* Bug with IE in rendering header in some cases
+
+= 0.5.0 =
+
+* Added per element modes
+
+= 0.4.1 =
+
+* Updated something that I can't remember now
+
+= 0.4.0 =
+
+* Basic admin functionality added
+* Implemented prototype in plugin for per element rendering
+* Updated Facelift to 1.2b
+
+= 0.3.0 =
+
+* Initial Release
+* Auto redering of `<h1>` to `<h5>` only
+* Using Facelift 1.1
