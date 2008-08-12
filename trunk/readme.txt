@@ -72,13 +72,12 @@ All the fonts that come with FLIR are either free or Open Source.
 
 = 0.4.1 =
 
-* Updated something but I can't remember what it was
+* Updated Facelift to 1.2b
 
 = 0.4.0 =
 
 * Basic admin functionality added
 * Implemented prototype in plugin for per element rendering
-* Updated Facelift to 1.2b
 
 = 0.3.0 =
 
@@ -91,4 +90,13 @@ All the fonts that come with FLIR are either free or Open Source.
 * Configuration of Facelift from admin panel ~v0.7
 * User defined element replacement ~v0.8
 * Quick Effects (require ImageMagick)
+* Reduce number of fonts that come with plugin
+* Easy addition of your own fonts - just drop in fonts folder and configure from admin panel
+* Selection of what fonts to use
 * More...
+
+== Development Version ==
+
+* Always the latest code
+* May be buggy - actually probably is
+* Please remove existing version before install development version
