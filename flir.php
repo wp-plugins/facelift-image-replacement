@@ -4,13 +4,14 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.5.7
+Version: 0.5.9
 Author URI: http://www.23systems.net/
 */
-global $flir_path, $facelift_path, $flir_fonts, $fonts;
+global $flir_path, $facelift_path, $flir_fonts, $fonts, $facelift_config;
 require('facelift/config-flir.php');
 $flir_path     = WP_PLUGIN_URL.'/facelift-image-replacement';
 $facelift_path = $flir_path.'/facelift/';
+$facelift_config = dirname(__FILE__)."/facelift/config-flir.php";
 $flir_fonts    = $fonts;
 if (!class_exists('wp_flir')) {
 
@@ -50,6 +51,14 @@ if (!class_exists('wp_flir')) {
 
     /*---- Saves the admin options to the database. ----*/
     function saveAdminOptions($optionsname, $options) {
+      if ($optionsname == 'wp_flir_options') {
+        echo '<div id="message" class="updated fade">';
+		    _e('<p>FLIR Display Options Updated</p></div>',"FLIR");
+		  }
+      elseif ($optionsname == 'wp_flir_config') {
+        echo '<div id="message" class="updated fade">';
+		    _e('<p>FLIR Configuration Updated</p></div>',"FLIR");
+      }
       update_option($optionsname, $options);
     }
 
@@ -99,6 +108,46 @@ if (!class_exists('wp_flir')) {
             "imagemagick_path"        => $flir_imagemagick_path,
           );
           $this->saveAdminOptions($this->adminConfigName, $flir_config_options);
+
+          $flir_config_data = '';
+          $flir_config_data .= "<?php".$this->eol();
+          $flir_config_data .= "/* Facelift Image Replacement v1.1.1".$this->eol().$this->eol();
+
+          $flir_config_data .= "Facelift was written and is maintained by Cory Mawhorter.".$this->eol();
+          $flir_config_data .= "It is available from http://facelift.mawhorter.net/  */".$this->eol().$this->eol();
+          
+          $flir_config_data .= "define('UNKNOWN_FONT_SIZE', ".$flir_unknown_font_size."); // in pixels".$this->eol().$this->eol();
+
+          $flir_config_data .= "define('CACHE_CLEANUP_FREQ', ".$flir_cache_cleanup_frequency."); // -1 disable, 1 everytime, 10 would be about 1 in 10 times this script runs (higher number decreases frequency)".$this->eol();
+          $flir_config_data .= "define('CACHE_KEEP_TIME', ".$flir_cache_keep_time."); // 604800: 7 days".$this->eol();
+          $flir_config_data .= "define('CACHE_DIR', 'cache');".$this->eol();
+          $flir_config_data .= "define('FONTS_DIR', 'fonts');".$this->eol();
+          $flir_config_data .= "define('PLUGIN_DIR', 'plugins');".$this->eol().$this->eol();
+
+          $flir_config_data .= "define('HBOUNDS_TEXT', '".$flir_horizontal_text_bounds."'); // see http://facelift.mawhorter.net/docs/".$this->eol().$this->eol();
+
+          $flir_config_data .= "define('FONT_DISCOVERY', false);".$this->eol().$this->eol();
+
+          $flir_config_data .= "define('IM_EXEC_PATH', '".$flir_imagemagick_path."');  // ImageMagick binaries path".$this->eol().$this->eol();
+
+          $flir_config_data .= "// Each font you want to use should have an entry in the fonts array.".$this->eol();
+          $flir_config_data .= '$fonts = array();'.$this->eol();
+
+          if ($flir_fonts_list){
+            foreach ($flir_fonts_list as $key=>$value){
+              $flir_config_data .= '$fonts[\''.$this->keymaker($value).'\'] 	= \''.$value.'\';'.$this->eol();
+              }
+          }
+          $flir_config_data .= $this->eol().'// The font will default to the following (put your most common font here).'.$this->eol();
+          $flir_config_data .= '$fonts[\'default\'] 	= \''.$flir_font_default.'\';'.$this->eol().$this->eol();
+          
+          $flir_config_data .= '// Set replacement for "web fonts" here'.$this->eol();
+          $flir_config_data .= '//$fonts[\'arial\'] = $fonts[\'helvetica\'] = $fonts[\'sans-serif\'] 		= $fonts[\'puritan\'];'.$this->eol();
+          $flir_config_data .= '//$fonts[\'times new roman\'] = $fonts[\'times\'] = $fonts[\'serif\'] 		= $fonts[\'bentham\'];'.$this->eol();
+          $flir_config_data .= '//$fonts[\'courier new\'] = $fonts[\'courier\'] = $fonts[\'monospace\'] 	= $fonts[\'geo\'];'.$this->eol();
+          $flir_config_data .= '?'.'>'.$this->eol();
+          
+          $this->writeConfig($flir_config_data);
 
           /*	        echo "unknown_font_size: ".$unknown_font_size."<br />";
                     echo "cache_cleanup_frequency: ".$cache_cleanup_frequency."<br />";
@@ -179,6 +228,7 @@ require('flir-config.php');
       echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/admin.css" />'.$this->eol();
     }
 
+    /*---- UTILITY FUNCTIONS ----*/
     /*---- Create clean eols for source ----*/
     function eol() {
       if (strtoupper(substr(PHP_OS, 0, 3) == 'WIN')) {
@@ -192,6 +242,33 @@ require('flir-config.php');
       }
       return $eol;
     }
+    
+    /*---- sets selected array items in multi select form field to selected ----*/
+    function setSelected($theitem,$thearray) {
+      $ret_value = false;
+	    if (!empty($thearray)) {
+		    foreach ($thearray as $key=>$value) {
+			   if ($value == $theitem) { $ret_value = true; }
+		    }
+	    }
+	   return $ret_value;
+    }
+    
+    /*---- Reduce filename to acceptable array key ----*/
+    function keymaker($filename) {
+      $replacepattern = "/(\.otf)|(\.ttf)|(-*_*\d*\s*)/i";
+      $keyname = strtolower(preg_replace($replacepattern, '', $filename));
+      return $keyname;
+    }
+    
+    /*---- Writes facelift config file to facelift directory ----*/
+    function writeConfig($configdata) {
+      global $facelift_config;
+      $handle = fopen($facelift_config, 'wb');
+      fwrite($handle, $configdata);
+      fclose($handle);
+    }
+
   }
 }
 
