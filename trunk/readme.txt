@@ -12,11 +12,19 @@ Facelift Image Replacment is a script that generates image representations of te
 
 FLIR for WordPress implements Facelife Image Replacement by Cory Mawhorter.  It is currently in early development but is usable at this time with some manual configuration.  Several freeware fonts are provided with FLIR for WordPress
 
+FLIR for WordPress is SEO friendly and only renders the image in the browser if JavaScript is enabled.  You HTML/XHTML code remains unchanged leaving your head tags readable by search engines and the page readable by those without JavaScript.
+
 Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement script that dynamically generates image representations of text on your web page in fonts that otherwise might not be visible to your visitors. The generated image will be automatically inserted into your web page via Javascript and visible to all modern browsers. Any element with text can be replaced: from headers (`<h1>`, `<h2>`, etc.) to `<span>` elements and everything in between!
 
 You can see examples of what it does here: <a href="http://facelift.mawhorter.net/examples/">http://facelift.mawhorter.net/examples/</a>
 
 == Installation ==
+
+= Requirements =
+
+PHP and GD. Little testing has been done with different versions of PHP. If you have PHP 5 with GD enabled you shouldn't have any problems. Later versions PHP 4 should(?) also be okay. A newer version of ImageMagick is required for the FancyFonts and QuickEffects plugins.
+
+If GD is not installed on your server you will have to recompile PHP to include GD. If you are comfortable in WHM, you can do that under the “Update Apache” tab (check the “GD” box). Check your settings carefully (especially the PHP version - cPanel may try to change it) before you hit build. Plesk should have it enabled by default.  If you are not comfortable doing it yourself, ask your hosting company to do it for you. (Thanks Steve!)
 
 = Delete your existing version before installing this version =
 
