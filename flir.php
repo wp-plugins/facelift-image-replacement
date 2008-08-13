@@ -238,7 +238,7 @@ if (!class_exists('wp_flir')) {
             else {
                 echo "FLIR.auto();".$this->eol();
             }
-            echo '</script>;'.$this->eol();
+            echo "</script>;".$this->eol();
         }
    	
    	/*---- Adds a link to the stylesheet to the header ----*/
