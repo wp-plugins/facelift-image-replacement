@@ -4,7 +4,7 @@ Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.5
 Tested up to: 2.6
-Stable tag: 0.5.5
+Stable tag: 0.5.9
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -30,10 +30,11 @@ If GD is not installed on your server you will have to recompile PHP to include 
 
 1. Extract to your `wp-content/plugins` directory.
 2. Look in `wp-content/plugins/facelift-image-replacement/facelift`
+3. Set the `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` to be writable
 3. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable
 4. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
-5. Open `config-flir.php` and customize to your liking. All the variables and options are explained in-depth inside the file.
-6. Activate plugin in WordPress admin panel
+5. Activate plugin in WordPress admin panel
+5. Set FLIR configuration in the admin panel - config-flir.php must be writable for changes to take effect.
 7. Customize tags for FLIR on FLIR submenu under the Design menu
 
 = Notes =
