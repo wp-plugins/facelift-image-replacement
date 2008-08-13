@@ -18,6 +18,12 @@ You can see examples of what it does here: <a href="http://facelift.mawhorter.ne
 
 == Installation ==
 
+= Requirements =
+
+PHP and GD. Little testing has been done with different versions of PHP. If you have PHP 5 with GD enabled you shouldn't have any problems. Later versions PHP 4 should(?) also be okay. A newer version of ImageMagick is required for the FancyFonts and QuickEffects plugins.
+
+If GD is not installed on your server you will have to recompile PHP to include GD. If you are comfortable in WHM, you can do that under the “Update Apache” tab (check the “GD” box). Check your settings carefully (especially the PHP version - cPanel may try to change it) before you hit build. Plesk should have it enabled by default.  If you are not comfortable doing it yourself, ask your hosting company to do it for you. (Thanks Steve!)
+
 = Delete your existing version before installing this version =
 
 1. Extract to your `wp-content/plugins` directory.
