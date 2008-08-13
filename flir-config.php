@@ -3,8 +3,21 @@
       	<h3><?php _e('FLIR Configuration',"FLIR"); ?>: </h3>
       	<div class="inside">
 					<form action="?page=FLIR" method="post" id="flir_config" name="flir_config">
+<?php 
+					if (!empty($this->adminConfig)) {
+  					$flir_config         		 = $this->getAdminOptions($this->adminConfigName);
+	          $flir_unknown_font_size       = $flir_config['unknown_font_size'];
+	          $flir_cache_cleanup_frequency = $flir_config['cache_cleanup_frequency'];
+	          $flir_cache_keep_time         = $flir_config['cache_keep_time'];
+	          $flir_horizontal_text_bounds  = $flir_config['horizontal_text_bounds'];
+	          $flir_javascript_method       = $flir_config['javascript_method'];
+	          $flir_fonts_list              = $flir_config['fonts_list'];
+	          $flir_font_default            = $flir_config['font_default'];
+	          $flir_imagemagick_path        = $flir_config['imagemagick_path'];
+					}
+?>
 					<table>
-					<tr><td><h4>Unknown Font Size</h4></td><td>
+					<tr><td valign="top"><strong><?php _e('Unknown Font Size',"FLIR"); ?>: </strong></td><td valign="top">
 					<select name="unknown_font_size">
 					  <option value="6">6</option>
 					  <option value="8">8</option>
@@ -23,8 +36,9 @@
 					  <option value="60">60</option>
 					  <option value="72">72</option>
 					</select>
-					</td></tr>
-					<tr><td><h4>Cache Cleanup Frequency</h4></td><td>
+						</td><td valign="top"><small><?php _e('If the font size cannot be determined automatically the size will default to this (in pixels).',"FLIR"); ?></small></td>
+					</tr>
+					<tr><td valign="top"><strong><?php _e('Cache Cleanup Frequency',"FLIR"); ?>: </strong></td><td valign="top">
 					<select name="cache_cleanup_frequency">
 					  <option value="-1" selected="selected">Never</option>
 					  <option value="1">Every time</option>
@@ -41,8 +55,9 @@
 					  <option value="5000">Every 5000 times</option>
 					  <option value="10000">Every 10000 times</option>
 					</select>
-					</td></tr>
-					  <tr><td><h4>Cache Keep Time</h4></td><td>
+					</td><td valign="top"><small><?php _e('All generated images are cached. If you have a large site with many different bits of text being replaced, this may lead to a lot of old, outdated images in the cache.',"FLIR"); ?></small></td>
+					</tr>
+					<tr><td valign="top"><strong><?php _e('Cache Keep Time',"FLIR"); ?>: </strong></td><td valign="top">
 					  <select name="cache_keep_time">
 					    <option value="600">10 Minutes</option>
 					    <option value="3600">1 hour</option>
@@ -57,47 +72,59 @@
 					    <option value="15768000">6 Months</option>
 					    <option value="31536000">1 Year</option>
 					  </select>
-					</td></tr>
-					  <tr><td><h4>Horizontal Text Bounds</td><td>
-					  <input name="horizontal_text_bounds" type="text" value="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" size="60" maxlength="254" />
-					</td></tr>
-					  <tr><td><h4>Font Discovery</h4></td><td>
-					  <input type="checkbox" name="font_discovery" value="1" />
-					</td></tr>
-					  <tr><td><h4>JavaScript Method</h4></td><td>
-					  <select name="javascript_method">
+					</td><td valign="top"><small><?php _e('When the cache cleanup runs, cached images that are older than the time provided here will be deleted (Unix timestamp).  This value is not used if Cache Cleanup Frequency is disabled.',"FLIR"); ?></small></td>
+					</tr>
+					<tr>
+						<td valign="top"><strong><?php _e('Horizontal Text Bounds',"FLIR"); ?>: </strong></td><td valign="top">
+					  	<input name="horizontal_text_bounds" type="text" value="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" size="60" maxlength="254" />
+					  </td><td valign="top"><small><?php _e('This will only be used if some fonts have characters that will extend below the baseline. For example, p, q, or y all have tails that extend below the baseline.  The text will be used to attempt to figure out the lowest and highest point of all the characters. This will create a uniform height across all generated images for a particular font size.  You should not have to change this value unless you are working in a language that does not use the a-z alphabet.',"FLIR"); ?></small></td>
+					</tr>
+<!--					<tr><td valign="top"><strong><?php// _e('Font Discovery',"FLIR"); ?>: </strong></td>
+						<td valign="top">
+							<input type="checkbox" name="font_discovery" value="1" />
+						</td><td valign="top"><small><?php _e('If the font size cannot be determined automatically the size will default to this (in pixels).',"FLIR"); ?></small></td>
+					</tr>  -->
+					<tr><td valign="top"><strong><?php _e('JavaScript Method',"FLIR"); ?>: </strong></td><td valign="top">
+						<select name="javascript_method">
 					    <option value="native">Native</option>
 					    <option value="jquery" selected="selected">jQuery</option>
 					    <option value="prototype">Prototype</option>
 					    <option value="scriptalicious">Scriptalicious</option>
 					  </select>
-					</td></tr>
+						</td><td valign="top"><small><?php _e('Choose a JavaScript library to assist in the rendering.  jQuery seems to be the fastest but you may alreay be loading a particular library and prefer that one.',"FLIR"); ?></small></td>
+					</tr>
 					<?php
-		$fonts_list = array();
-
-    $flir_font_dir = (dirname(__FILE__)."/facelift/".FONTS_DIR);
-		$pattern = "/(\.otf)|(\.ttf)/i";
+		$fonts_list   = array();
+		$flir_font_dir  = (dirname(__FILE__)."/facelift/".FONTS_DIR);
+		$pattern        = "/(\.otf)|(\.ttf)/i";
 		$replacepattern = "/(\.otf)|(\.ttf)|(-*_*\d*\s*)/i";
-    if ($handle = opendir($flir_font_dir)) {
-        while (false !== ($file = readdir($handle))) {
-            if (preg_match($pattern, $file)) {
-								$newkey = strtolower(preg_replace($replacepattern,'',$file));
-                $fonts_list[$newkey] = $file;
-            }
-        }
-        closedir($handle);
-    }
+		if ($handle = opendir($flir_font_dir)) {
+		  while (false !== ($file = readdir($handle))) {
+		    if (preg_match($pattern, $file)) {
+		      $newkey = strtolower(preg_replace($replacepattern, '', $file));
+		      $fonts_list[$newkey] = $file;
+		    }
+		  }
+		  closedir($handle);
+		}
 					?>
-					  <tr><td><h4>Fonts List</h4></td><td>
-					  <select name="fonts_list" size="1" multiple="multiple" style="height:150px;">
-					  <?php if (!empty($fonts_list)) {foreach ( $fonts_list as $key=>$value) {echo '<option ';/*if ($flir_elements_fonts[7]==$key) echo 'selected="selected" '; */echo 'value="'.$key.'">'.ucfirst($key).' ('.$value.')</option>';}}?>
+					  <tr><td valign="top"><strong><?php _e('Fonts List',"FLIR"); ?>: </strong></td><td valign="top">
+					  <select name="fonts_list[]" size="8" multiple="multiple" style="height:120px;">
+					  <?php if (!empty($fonts_list)) {foreach ( $fonts_list as $key=>$value) {echo '<option ';if ($flir_fonts_list['comt'] == $key) echo 'selected="selected" '; echo 'value="'.$key.'">'.ucfirst($key).' ('.$value.')</option>';}}?>
 					  </select>
-					</td></tr>
-					  <tr><td><h4>Default Font</h4></td><td>
+						</td><td valign="top"><small><?php _e('All the fonts you have in the fonts directory should be listed here.  Use CTRL+Click to choose which fonts to use.',"FLIR"); ?></small></td>
+					</tr>
+					  <tr><td valign="top"><strong><?php _e('Default Font',"FLIR"); ?>: </strong></td><td valign="top">
 					  <select name="font_default">
 						<?php if (!empty($fonts_list)) {foreach ( $fonts_list as $key=>$value) {echo '<option ';/*if ($flir_elements_fonts[7]==$key) echo 'selected="selected" '; */echo 'value="'.$key.'">'.ucfirst($key).' ('.$value.')</option>';}}?>
 						</select>
-					</td></tr>
+						</td><td valign="top"><small><?php _e('If the font cannot be determined automatically the font will default to this.',"FLIR"); ?></small></td>
+					</tr>
+					<tr>
+						<td valign="top"><strong><?php _e('ImageMagick Path',"FLIR"); ?>: </strong></td><td valign="top">
+					  	<input name="imagemagick_path" type="text" value="/usr/bin/" size="60" maxlength="254" />
+					  </td><td valign="top"><small><?php _e('Set this to the location of your ImageMagick binaries (with a trailing slash).  Required only if you are using Facelift plugins',"FLIR"); ?></small></td>
+					</tr>
 					</table>
 					<p class="submit"><input type="submit" class="btn" name="save" style="padding:5px 30px 5px 30px;" value="<?php _e('Save FLIR Configuration',"FLIR"); ?>" /></p>
 					<input type="hidden" name="action" value="action" /><input type="hidden" name="sub" value="config" />
@@ -105,3 +132,18 @@
 			</div>
 			</div>
 			</div>
+<?php
+function select_font_list($thefont,$fontlist) {
+	if (!empty($fontlist)) {
+		foreach ($fontlist as $key=>$value) {
+			if ($key == $thefont) {
+				 $ret_value = 'selected="selected"';
+			}
+			else {
+				 $ret_value = '';
+			}
+		}
+	}
+	return $ret_value;
+}		
+?>

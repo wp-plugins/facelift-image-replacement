@@ -4,21 +4,21 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.5.5
+Version: 0.5.7
 Author URI: http://www.23systems.net/
 */
 global $flir_path, $facelift_path, $flir_fonts, $fonts;
 require('facelift/config-flir.php');
-$flir_path = WP_PLUGIN_URL.'/facelift-image-replacement';
+$flir_path     = WP_PLUGIN_URL.'/facelift-image-replacement';
 $facelift_path = $flir_path.'/facelift/';
-$flir_fonts = $fonts;
+$flir_fonts    = $fonts;
 if (!class_exists('wp_flir')) {
 
   class wp_flir {
 
     /*---- The name the options are saved under in the database ----*/
     var $adminOptionsName = "wp_flir_options";
-    var $adminConfigName = "wp_flir_options";
+    var $adminConfigName = "wp_flir_config";
 
     /*---- PHP 4 Compatible Constructor ----*/
     function wp_flir() {
@@ -70,10 +70,6 @@ if (!class_exists('wp_flir')) {
           $flir_elements_fonts = $_POST[flir_element_fonts];
           $flir_elements_mode  = $_POST[flir_mode];
           $flir_default_mode   = $_POST[flir_default_mode];
-
-          /*   	 echo "Elements: ".$flir_elements."<br />";
-          		 echo "Fonts: ".$flir_elements_fonts."<br />";
-          		 echo "Mode: ".$flir_elements_mode."<br />"; */
           $flir_elements_options = array(
             "elements"    => $flir_elements,
             "fonts"       => $flir_elements_fonts,
@@ -83,6 +79,39 @@ if (!class_exists('wp_flir')) {
           $this->saveAdminOptions($this->adminOptionsName, $flir_elements_options);
         }
         elseif ($_POST['sub'] == 'config') {
+          $flir_font_list               = array();
+          $flir_unknown_font_size       = $_POST[unknown_font_size];
+          $flir_cache_cleanup_frequency = $_POST[cache_cleanup_frequency];
+          $flir_cache_keep_time         = $_POST[cache_keep_time];
+          $flir_horizontal_text_bounds  = $_POST[horizontal_text_bounds];
+          $flir_javascript_method       = $_POST[javascript_method];
+          $flir_fonts_list              = $_POST[fonts_list];
+          $flir_font_default            = $_POST[font_default];
+          $flir_imagemagick_path        = $_POST[imagemagick_path];
+          $flir_config_options = array(
+            "unknown_font_size"       => $flir_unknown_font_size,
+            "cache_cleanup_frequency" => $flir_cache_cleanup_frequency,
+            "cache_keep_time"         => $flir_cache_keep_time,
+            "horizontal_text_bounds"  => $flir_horizontal_text_bounds,
+            "javascript_method"       => $flir_javascript_method,
+            "fonts_list"              => $flir_fonts_list,
+            "font_default"            => $flir_font_default,
+            "imagemagick_path"        => $flir_imagemagick_path,
+          );
+          $this->saveAdminOptions($this->adminConfigName, $flir_config_options);
+
+          /*	        echo "unknown_font_size: ".$unknown_font_size."<br />";
+                    echo "cache_cleanup_frequency: ".$cache_cleanup_frequency."<br />";
+                    echo "cache_keep_time: ".$cache_keep_time."<br />";
+          	        echo "horizontal_text_bounds: ".$horizontal_text_bounds."<br />";
+                    echo "javascript_method: ".$javascript_method."<br />";
+                    echo "fonts_list: ".$fonts_list."<br />";
+                    if ($fonts_list){
+          	 					foreach ($fonts_list as $f){echo "fonts_list: ".$f."<br />";}
+          					}
+          	        echo "font_default: ".$font_default."<br />";
+                    echo "imagemagick_path: ".$imagemagick_path."<br />";
+          */
         }
       }
       ?>
@@ -170,4 +199,3 @@ require('flir-config.php');
 if (class_exists('wp_flir')) {
   $wp_flir = new wp_flir();
 }
-?>
