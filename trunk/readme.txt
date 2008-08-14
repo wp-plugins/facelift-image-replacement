@@ -24,26 +24,26 @@ You can see examples of what it does here: <a href="http://facelift.mawhorter.ne
 
 PHP and GD. Little testing has been done with different versions of PHP. If you have PHP 5 with GD enabled you shouldn't have any problems. Later versions PHP 4 should(?) also be okay. A newer version of ImageMagick is required for the FancyFonts and QuickEffects plugins.
 
-If GD is not installed on your server you will have to recompile PHP to include GD. If you are comfortable in WHM, you can do that under the “Update Apache” tab (check the “GD” box). Check your settings carefully (especially the PHP version - cPanel may try to change it) before you hit build. Plesk should have it enabled by default.  If you are not comfortable doing it yourself, ask your hosting company to do it for you. (Thanks Steve!)
+If GD is not installed on your server you will have to recompile PHP to include GD. If you are comfortable in WHM, you can do that under the "Update Apache" tab (check the "GD" box). Check your settings carefully (especially the PHP version - cPanel may try to change it) before you hit build. Plesk should have it enabled by default.  If you are not comfortable doing it yourself, ask your hosting company to do it for you. (Thanks Steve!)
 
 = Delete your existing version before installing this version =
 
-1. Extract to your `wp-content/plugins` directory.
-2. Look in `wp-content/plugins/facelift-image-replacement/facelift`
-3. Set the `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` to be writable
-3. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable
-4. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
-5. Activate plugin in WordPress admin panel
-5. Set FLIR configuration in the admin panel - config-flir.php must be writable for changes to take effect.
-7. Customize tags for FLIR on FLIR submenu under the Design menu
+   1. Extract to your `wp-content/plugins` directory.
+   2. Look in the `wp-content/plugins/facelift-image-replacement/facelift` directory
+   3. Set the `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` to be writable (`chmod a+w config-flir.php`).
+   4. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable (`chmod a+w /cache`)
+   5. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
+   6. Activate plugin in WordPress admin panel
+   7. Set FLIR configuration in the admin panel - `config-flir.php` must be writable for changes to take effect.
+   8. Customize tags for FLIR on FLIR submenu under the Design menu
 
 = Notes =
 
-* Plugins are not implemented yet
-* Completely delete any old verions before upgrading as this plugin is under rapid development
-* You cannot auto-upgrade from version 0.3.0
-* Detailed instruction on the admin panel coming soon
 * Text remains intact in source so search engines see your page as text!
+* Plugins are not implemented yet
+* Completely delete any old versions before upgrading as this plugin is under rapid development
+* You may not be able to cannot auto-upgrade from within WordPress at this time due to an unresolved permissions issue.
+* More detailed instruction on the admin panel coming soon.
 
 == Screenshots ==
 
@@ -69,6 +69,11 @@ Yes, eventually they will.  They will require ImageMagick 6.3.7 or higher to fun
 All the fonts that come with FLIR are either free or Open Source.
 
 == Changelog ==
+
+= 0.5.9 =
+
+* Added basic configuration to admin panel
+* Initialize on load did not make it into this revision 
 
 = 0.5.5 =
 
