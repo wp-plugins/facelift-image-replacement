@@ -5,8 +5,8 @@
 					<form action="?page=FLIR" method="post" id="flir_elements" name="flir_elements">
 <?php 
 					if (!empty($this->adminConfig)) {
-  					$flir_config         		 = $this->getAdminOptions($this->adminConfigName);
-	          $flir_fonts_list              = $flir_config['fonts_list'];
+  					$flir_config         = $this->getAdminOptions($this->adminConfigName);
+	          $flir_fonts_list     = $flir_config['fonts_list'];
 					}
 
 					if (!empty($this->adminOptions)) {
@@ -15,16 +15,17 @@
 					  $flir_elements_fonts = $flir_options['fonts'];
 					  $flir_elements_mode  = $flir_options['mode'];
 					  $flir_default_mode   = $flir_options['defaultmode'];
+					  $flir_fancy_font     = $flir_options['fancyfont'];
 					}
 ?>
 						<table class="widefat">
             	<thead>
             		<tr valign="top">
-									<th scope="col">Element</th>
-									<th scope="col">Use</th>
-									<th scope="col">Font</th>
-									<th scope="col">Mode</th>
-									<th scope="col">Effect</th>
+									<th scope="col"><?php _e('Element',"FLIR"); ?></th>
+									<th scope="col"><?php _e('Use',"FLIR"); ?></th>
+									<th scope="col"><?php _e('Font',"FLIR"); ?></th>
+									<th scope="col"><?php _e('Mode',"FLIR"); ?></th>
+									<th scope="col"><?php _e('Quick Effects*',"FLIR"); ?></th>
 								</tr>
             	</thead>
             <tr>
@@ -109,10 +110,25 @@
                <td>&nbsp;</td>
             </tr>
          </table>
-         <h4><?php _e('Default Mode',"FLIR"); ?>: </h4>
-                  <select name="flir_default_mode">
-                     <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_default_mode==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
-                  </select>
+						<table class="widefat">
+            	<thead>
+            		<tr valign="top">
+									<th scope="col"><?php _e('Default Mode',"FLIR"); ?></th>
+									<th scope="col"><?php _e('Use FancyFonts Plugin',"FLIR"); ?></th>
+                </tr>
+              </thead>
+                <tr>
+                  <td width="50%">
+                    <select name="flir_default_mode">
+                      <?php if (!empty($flir_modes)) {foreach ( $flir_modes as $value) {echo '<option ';if ($flir_default_mode==$value) echo 'selected="selected" ';echo 'value="'.$value.'">'.ucfirst($value).'</option>';}}?>
+                    </select>
+                    <?php _e('<p><small>This selects the default rendering mode for FLIR to use when no other rendering mode is specified in the Elements to Replace section or you are using the Automatic Method as specified in the FLIR Configuraton section.</small></p>',"FLIR"); ?>
+                  </td>
+                  <td width="50%">
+                    <input type="checkbox" name="flir_fancy_font" value="small"<?php if ($flir_fancy_font) echo ' checked="checked"';?> /><?php _e('<p><small>Some fonts do not get drawn properly by the integrated Facelift image generator. This is due to a feature of PHP\'s GD. These fonts typically include characters with long tails that extend beyond their boundaries.  FanyFonts Uses <a href="http://www.imagemagick.org/script/index.php" title="ImageMagick" target="_blank">ImageMagick</a> to render images as an alternative to the GD Library. ImageMagick is required for FancyFonts and QuickEffects plugins. You must have ImageMagick installed and the correct path set in the FLIR Configuration section for ImageMagick to work with FLIR.</small></p>',"FLIR"); ?>
+                  </td>
+                </tr>
+              </table>
          <p class="submit"><input type="submit" class="btn" name="save" style="padding:5px 30px 5px 30px;" value="<?php _e('Save Element Configuration',"FLIR"); ?>" /></p>
 				<input type="hidden" name="action" value="action" /><input type="hidden" name="sub" value="elements" />
          </form>
