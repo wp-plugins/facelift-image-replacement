@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.7.0
+Version: 0.7.5
 Author URI: http://www.23systems.net/
 */
 global $flir_url, $facelift_url;
@@ -19,18 +19,17 @@ $facelift_fonts_path = $facelift_path.'fonts';
 $facelift_config_path = $facelift_path.'config-flir.php';
 
 if (!function_exists("flir_reload")) {
-	function flir_reload() {
+	function flir_reload($update) {
 		$location = get_option('siteurl').'/wp-admin/themes.php?page=FLIR';
 		echo '<script>'."\r\n";
 		echo '<!--'."\r\n";
-  	echo 'window.location="'.$location.'"'."\r\n";
+  	echo 'window.location="'.$location.'&updated='.$update.'"'."\r\n";
   	echo '//-->'."\r\n";
   	echo '</script>'."\r\n";
   	}
 }
 
 if (!class_exists('wp_flir')) {
-
   class wp_flir {
 
     /*---- The name the options are saved under in the database ----*/
@@ -50,7 +49,7 @@ if (!class_exists('wp_flir')) {
       add_action("admin_head", array(&$this, "add_admin_css"));
       add_action("init", array(&$this, "add_scripts"));
       add_action("wp_footer", array(&$this, 'wp_footer_intercept'));
-      add_action("wp_head", array(&$this, "add_css"));
+//      add_action("wp_head", array(&$this, "add_css"));
       $this->adminOptions = $this->getAdminOptions($this->adminOptionsName);
       $this->adminConfig = $this->getAdminOptions($this->adminConfigName);
       $this->adminInit = get_option($this->adminInitName);
@@ -142,17 +141,17 @@ if (!class_exists('wp_flir')) {
           $flir_elements_fonts = $_POST[flir_element_fonts];
           $flir_elements_mode  = $_POST[flir_mode];
           $flir_default_mode   = $_POST[flir_default_mode];
+          $flir_fancy_font     = $_POST[flir_fancy_font];
           $flir_elements_options = array(
             "elements"    => $flir_elements,
             "fonts"       => $flir_elements_fonts,
             "mode"        => $flir_elements_mode,
             "defaultmode" => $flir_default_mode,
+            "fancyfont"   => $flir_fancy_font,
           );
           $this->saveAdminOptions($this->adminOptionsName, $flir_elements_options);
-          //TO DO:1 Move elsewhere to relect update to users and fix fade
-        	echo '<div id="message" class="updated fade">';
-		    	_e('<p>FLIR Display Options Updated</p></div>',"FLIR");
-		    	flir_reload();
+
+		    	flir_reload('elements');
         }
         elseif ($_POST['sub'] == 'config') {
           $flir_font_list               = array();
@@ -185,12 +184,9 @@ if (!class_exists('wp_flir')) {
           );
           $this->configSet = true;
           $this->saveAdminOptions($this->adminConfigName, $flir_config_options);
-          //TO DO:2 Move elsewhere to relect update to users and fix fade
-        	echo '<div id="message" class="updated fade">';
-		    	_e('<p>FLIR Configuration Updated</p></div>',"FLIR");
 
 					require('admin/flir-write-config.php');
-					flir_reload();
+					flir_reload('config');
         }
         elseif ($_POST['sub'] == 'settings') {
         	$flir_clear_cache      = $_POST[clear_cache];
@@ -198,6 +194,7 @@ if (!class_exists('wp_flir')) {
         	
         	if (!empty($flir_clear_cache)) {
 						$this->clearCache($facelift_cache_path);
+						flir_reload('cache');
 					}
         
         	if (!empty($flir_reinitialize)) {
@@ -206,18 +203,43 @@ if (!class_exists('wp_flir')) {
 						delete_option($this->adminConfigName);
 						delete_option($this->adminInitName);
 						$this->flir-init;
-						flir_reload();
+						flir_reload('reinit');
 					}
         }
       }
+      /*---- Notify FLIR status ----*/
+      $flir_status     = $_GET[updated];
+      if ($flir_status) {
+      switch ($flir_status)
+				{
+				case 'elements':
+				  echo '<div id="message" class="updated fade">';
+		    	_e('<p><strong>FLIR Elements Saved</strong></p></div>',"FLIR");
+				  break;  
+				case 'config':
+				  echo '<div id="message" class="updated fade">';
+		    	_e('<p><strong>FLIR Configuration Saved</strong></p></div>',"FLIR");
+				  break;
+				case 'cache':
+				  echo '<div id="message" class="updated fade">';
+		    	_e('<p><strong>FLIR Cache Cleared</strong></p></div>',"FLIR");
+				  break;
+				case 'reinit':
+				  echo '<div id="message" class="updated fade">';
+		    	_e('<p><strong>FLIR Reinitialized</strong></p></div>',"FLIR");
+				  break;
+				default:
+				  break;
+				}
+      }
       ?>
 		<div class="wrap alternate">
-			<h2><?php _e('FLIR for WordPress Configuration (v0.6.0 / Facelift v1.2b2)', 'FLIR');?></h2>
+			<h2><?php _e('FLIR for WordPress Configuration (v0.7.5 / Facelift v1.2b2)', 'FLIR');?></h2>
 			<br style="clear:both;" />
 <?php
 			require('admin/flir-config.php');
+			require('admin/flir-el.php');
 			require('admin/flir-settings.php');
-      require('admin/flir-el.php');
       ?>
 			<br style="clear:both;" />
 		</div>
@@ -265,6 +287,13 @@ if (!class_exists('wp_flir')) {
 					$flir_elements_fonts = $flir_options['fonts'];
 					$flir_elements_mode  = $flir_options['mode'];
 					$flir_default_mode   = $flir_options['defaultmode'];
+					$flir_fancy_fonts   = $flir_options['fancyfont'];
+					if ($flir_fancy_fonts) {
+            $setFancyFonts = ", mode:'fancyfonts'";
+          }
+          else {
+            $setFancyFonts = "";
+          }
 				}
 				if (!empty($this->adminConfig)) {
   				$flir_config  = $this->getAdminOptions($this->adminConfigName);
@@ -272,12 +301,12 @@ if (!class_exists('wp_flir')) {
 				}
 				if ($flir_method == 'jquery') {
 					echo '<script type="text/javascript">'.$this->eol();
-					echo "FLIR.init({path:'$facelift_url'},new FLIRStyle({mode:'".$flir_default_mode."'}));".$this->eol();
+					echo "FLIR.init({path:'$facelift_url'},new FLIRStyle({mode:'".$flir_default_mode."'".$setFancyFonts."}));".$this->eol();
 					if (!empty($flir_elements)) {
 						echo 'jQuery(function($){'.$this->eol();
 						echo '    $(document).ready(function(){'.$this->eol();
 							foreach ($flir_elements as $key => $value) {
-								echo '    $("'.$value.'").each( function() { FLIR.replace(this, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\'}));});'.$this->eol();
+								echo '    $("'.$value.'").each( function() { FLIR.replace(this, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\''.$setFancyFonts.'}));});'.$this->eol();
 							}
 						echo '    });'.$this->eol();
 						echo '});'.$this->eol();
@@ -285,26 +314,26 @@ if (!class_exists('wp_flir')) {
 					else {
 						echo "FLIR.auto();".$this->eol();
 					}
-					echo '</script>;'.$this->eol();
+					echo '</script>'.$this->eol();
 				}
 				elseif  ($flir_method == 'prototype' || $flir_method == 'scriptaculous') {
 					echo '<script type="text/javascript">'.$this->eol();
-   				echo "FLIR.init({path:'$facelift_url'},new FLIRStyle({mode:'".$flir_mode."'}));".$this->eol();
+   				echo "FLIR.init({path:'$facelift_url'},new FLIRStyle({mode:'".$flir_default_mode."'".$setFancyFonts."}));".$this->eol();
 	      	if (!empty($flir_elements)) {
 		      	foreach ($flir_elements as $key => $value) {
-							echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\'})); } );'.$this->eol();
+							echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$flir_elements_mode[$key].'\',cFont:\''.$flir_elements_fonts[$key].'\''.$setFancyFonts.'})); } );'.$this->eol();
 			    	}
 		    	}
 		    	else {
    					echo "FLIR.auto();".$this->eol();
    				}
-   				echo '</script>;'.$this->eol();
+   				echo '</script>'.$this->eol();
    			}
 				else {
 					echo '<script type="text/javascript">'.$this->eol();
-   				echo "FLIR.init({path:'$facelift_url'},new FLIRStyle({mode:'".$flir_mode."'}));".$this->eol();
+   				echo "FLIR.init({path:'$facelift_url'},new FLIRStyle({mode:'".$flir_default_mode."'".$setFancyFonts."}));".$this->eol();
  					echo "FLIR.auto();".$this->eol();
- 					echo '</script>;'.$this->eol();
+ 					echo '</script>'.$this->eol();
    			}
 		}
 
