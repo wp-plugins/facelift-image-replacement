@@ -10,7 +10,7 @@ Facelift Image Replacment is a script that generates image representations of te
 
 == Description ==
 
-FLIR for WordPress implements Facelift Image Replacement (FLIR) by Cory Mawhorter.  It is rapid development and almost completely configurable from the admin panel.  Several freeware fonts are provided with FLIR for WordPress.
+FLIR for WordPress implements Facelift Image Replacement (FLIR) by Cory Mawhorter.  It is in rapid development and at this time almost completely configurable from the admin panel.  Several freeware fonts are provided with FLIR for WordPress.
 
 FLIR for WordPress is SEO friendly and only renders the image in the browser if JavaScript is enabled.  You HTML/XHTML code remains unchanged leaving your head tags readable by search engines and the page readable by those without JavaScript.
 
