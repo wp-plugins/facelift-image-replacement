@@ -10,7 +10,7 @@ Facelift Image Replacment is a script that generates image representations of te
 
 == Description ==
 
-FLIR for WordPress implements Facelift Image Replacement (FLIR) by Cory Mawhorter.  It is rapid development and almost completely configurable from the admin panel.  Several freeware fonts are provided with FLIR for WordPress
+FLIR for WordPress implements Facelift Image Replacement (FLIR) by Cory Mawhorter.  It is rapid development and almost completely configurable from the admin panel.  Several freeware fonts are provided with FLIR for WordPress.
 
 FLIR for WordPress is SEO friendly and only renders the image in the browser if JavaScript is enabled.  You HTML/XHTML code remains unchanged leaving your head tags readable by search engines and the page readable by those without JavaScript.
 
@@ -62,8 +62,8 @@ If GD is not installed on your server you will have to recompile PHP to include 
 * Please ensure that you have a cache directory at `wp-content/plugins/facelift-image-replacement/facelift/cache` and that it is writable. (`chmod a+w /cache`)
 * Please ensure that your config-flir.php file exists at `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` and that it is writable. (`chmod a+w config-flir.php`)
 * Make sure the `wp-content/plugins/facelift-image-replacement/facelift/` is readable
-* Check your theme’s `footer.php` file and make sure it has the `wp_footer();` function in it.  It should be located just above the `</body>` element close tag.
-* Check your theme’s `header.php` file and make sure it has the `wp_head();` function in it.  It should be located just above the `</head>` element close tag.
+* Check your theme's `footer.php` file and make sure it has the `wp_footer();` function in it.  It should be located just above the `</body>` element close tag.
+* Check your theme's `header.php` file and make sure it has the `wp_head();` function in it.  It should be located just above the `</head>` element close tag.
 * Check the FLIR admin panel under the design menu and make certain all the options are set in the FLIR Configuration section.  Read the help text on the right of each option for information.
 * Check the FLIR admin panel under the design menu and make certain all the options you want are set in the Elements to Replace section.  Heading 1 is generally used for the blog heading, Heading 2 is used for the posts on the main page and on individual post pages, Heading 3 is often used with posts on the catagories and tags pages.  Small is often used for the date and author of the post.
 
@@ -153,9 +153,8 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 
 == Upcoming Features ==
 
-* Better test descriptions in admin panel ~v0.7.1
 * User defined element replacement ~v0.8
-* Quick Effects (require ImageMagick) ~v0.9
+* Quick Effects (requires ImageMagick) ~v0.9
 * More...
 
 == Under consideration ==
