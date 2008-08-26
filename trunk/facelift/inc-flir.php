@@ -1,7 +1,6 @@
 <?php
 /*
-Facelift Image Replacement v1.2 beta 2
-
+Facelift Image Replacement v1.2 beta 3
 Facelift was written and is maintained by Cory Mawhorter.  
 It is available from http://facelift.mawhorter.net/
 
@@ -98,14 +97,16 @@ function cleanup_cache() {
 	$d1->close();
 }
 
-function imagettftextbox($size, $angle, $left, $top, $color, $font, $raw_text, $max_width, $align="left") {
+function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_text, $max_width, $align='left', $lineheight=1.0) {
 	$raw_textlines = explode("\n", $raw_text);
 	
 	$formatted_lines = $formatted_widths = array();
-	$max_leftoffset = $max_rightoffset = $max_baseheight = $max_lineheight = 0;
+	$max_values = convertBoundingBox(imagettfbbox($size_pts, 0, $font, HBOUNDS_TEXT));
 	
+	$spaces = ' '.str_repeat(' ', (defined('SPACING_GAP')?SPACING_GAP:0));
+		
 	foreach($raw_textlines as $text) {		
-		$bounds = convertBoundingBox(imagettfbbox($size, $angle, $font, $text));
+		$bounds = convertBoundingBox(imagettfbbox($size_pts, $angle, $font, $text));
 		if($bounds['height'] > $max_lineheight)
 			$max_lineheight = $bounds['height'];
 		if($bounds['belowBasepoint'] > $max_baseheight)
@@ -119,14 +120,14 @@ function imagettftextbox($size, $angle, $left, $top, $color, $font, $raw_text, $
 			$formatted_lines[] = $text;
 			$formatted_widths[$text] = $bounds['width'];
 		}else { // text requires wrapping
-			$words = explode(' ', trim($text));
+			$words = explode($spaces, trim($text));
 			
 			$test_line = '';
 			for($i=0; $i < count($words); $i++) { // test words one-by-one to see if they put the width over
-				$prepend = $i==0 ? '' : $test_line.' '; // add space if not the first word
+				$prepend = $i==0 ? '' : $test_line.$spaces; // add space if not the first word
 				$working_line = $prepend.$words[$i];
 				
-				$bounds = convertBoundingBox(imagettfbbox($size, $angle, $font, $working_line)); // test working line
+				$bounds = convertBoundingBox(imagettfbbox($size_pts, $angle, $font, $working_line)); // test working line
 				
 //				echo $working_line." - ".$bounds['width']."<BR>";
 				
@@ -143,27 +144,27 @@ function imagettftextbox($size, $angle, $left, $top, $color, $font, $raw_text, $
 			}
 			
 			if($test_line!='') { // if words are finished and there is something left in the buffer add it
-				$bounds = convertBoundingBox(imagettfbbox($size, $angle, $font, $test_line)); // test working line
+				$bounds = convertBoundingBox(imagettfbbox($size_pts, $angle, $font, $test_line)); // test working line
 
 //				echo '<strong>ended, adding line "'.$test_line.'"</strong><br>';
 				$formatted_lines[] = $test_line;
 				$formatted_widths[$test_line] = $bounds['width'];
 			}
 		}
-		// The standard Witness pistol is steel designed to help control felt%0Arecoil, as well as provide...
 	}
 	
-//	print_r($formatted_widths);
-//	exit;
-	
-	$image = imagecreatetruecolor($max_width, ($max_lineheight*count($formatted_lines))+$max_baseheight);
+	$max_lineheight = ($max_values['height']*$lineheight);
+	$image = imagecreatetruecolor($max_width, (($max_lineheight*(count($formatted_lines)-1))+$max_values['yOffset'])+$max_values['belowBasepoint']);
 	imagesavealpha($image, true);
 	imagealphablending($image, false);
 	
-	imagefilledrectangle($image, 0, 0, imagesx($image), imagesy($image), imagecolorallocatealpha($image, abs($color['red']-100), abs($color['green']-100), abs($color['blue']-100), 127));	
+	imagefilledrectangle($image, 0, 0, imagesx($image), imagesy($image), gd_bkg($image));	
 	
 	for($i=0; $i < count($formatted_lines); $i++) {
-		$offset_top = ($max_lineheight*($i+1))+$top;
+		if($i==0)
+			$offset_top = $max_values['yOffset'];
+		else
+			$offset_top = ($max_lineheight*$i)+$max_values['yOffset'];
 
 		switch(strtolower($align)) {
 			default:
@@ -178,7 +179,7 @@ function imagettftextbox($size, $angle, $left, $top, $color, $font, $raw_text, $
 				break;
 		}
 
-		imagettftext($image, $size, $angle, $offset_left, $offset_top, imagecolorallocate($image, $color['red'], $color['green'], $color['blue']), $font, $formatted_lines[$i]);
+		imagettftext($image, $size_pts, $angle, $offset_left, $offset_top, gd_color($image), $font, $formatted_lines[$i]);
 	}
 	
 	return $image;
@@ -409,8 +410,12 @@ function convertBoundingBox ($bbox) {
     );
 }
 
-function is_number($str, $bAllowZero=false) {
-	$regex = $bAllowZero?'[0-9]+(\.[0-9]+)?': '(^([0-9]*\.[0-9]*[1-9]+[0-9]*)$)|(^([0-9]*[1-9]+[0-9]*\.[0-9]+)$)|(^([1-9]+[0-9]*)$)';
+function is_number($str, $bAllowDecimals=false, $bAllowZero=false) {
+	if($bAllowDecimals)
+		$regex = $bAllowZero?'[0-9]+(\.[0-9]+)?': '(^([0-9]*\.[0-9]*[1-9]+[0-9]*)$)|(^([0-9]*[1-9]+[0-9]*\.[0-9]+)$)|(^([1-9]+[0-9]*)$)';
+	else
+		$regex = $bAllowZero?'[0-9]+': '[1-9]+[0-9]*';
+		
 	return preg_match('#^'.$regex.'$#', $str);
 }
 
@@ -442,6 +447,38 @@ function space_out($text, $spaces) {
 	}
 	
 	return trim($ret);
+}
+
+function gd_bkg($img=NULL) {
+	global $FLIR;
+	
+	if(is_null($img))
+		global $image;
+	else
+		$image = $img;
+	
+	return imagecolorallocatealpha($image, abs($FLIR['color']['red']-100), abs($FLIR['color']['green']-100), abs($FLIR['color']['blue']-100), 127);
+}
+
+function gd_color($img=NULL) {
+	global $FLIR;
+	
+	if(is_null($img))
+		global $image;
+	else
+		$image = $img;
+	
+	$color = '';
+	if($opacity != 100)
+		$color = imagecolorallocatealpha($image, $FLIR['color']['red'], $FLIR['color']['green'], $FLIR['color']['blue'], round(127-(($FLIR['opacity']/100)*127)));
+	else 
+		$color = imagecolorallocate($image, $FLIR['color']['red'], $FLIR['color']['green'], $FLIR['color']['blue']);
+
+	return $color;
+}
+
+function fix_path($str) {
+	return IS_WINDOWS ? str_replace('/', '\\', $str) : str_replace('\\', '/', $str);
 }
 
 
@@ -488,10 +525,9 @@ function utf8_entities_strrev($str, $preserve_numbers = true)
 
 
 // PHP Compat stuff
-
-if(version_compare(PHP_VERSION, '5.2.0', '<')) {
+if(!function_exists('json_decode')) {
 	// very plain json_decode
-	function json_decode_p($str, $ignore=true) {
+	function json_decode($str, $ignore=true) {
 		$str = trim($str);
 		if(!preg_match('#^\{(("[\w]+":"[^"]*",?)*)\}$#i', $str, $m)) return array();
 		$data = explode('","', substr($m[1], 1, -1));
@@ -503,7 +539,9 @@ if(version_compare(PHP_VERSION, '5.2.0', '<')) {
 		
 		return $ret;
 	}
-	
+}
+
+if(version_compare(PHP_VERSION, '5.2.0', '<')) {	
 	function get_filename($path) {
 		$pathinf = pathinfo($path);
 		return substr($pathinf['basename'], 0, 0-strlen('.'.$pathinf['extension']) );
@@ -522,6 +560,61 @@ if(version_compare(PHP_VERSION, '5.1.2', '<')) {
 }else {
 	function get_hostname($url) {
 		return parse_url($url, PHP_URL_HOST);
+	}
+}
+
+if(version_compare(PHP_VERSION, '5.0.0', '<')) {
+	/***
+	 * The following has all been taken from the http://php.net/html_entity_decode comments.
+	 */
+	function html_entity_decode_utf8($string)
+	{
+		 static $trans_tbl;
+
+		 // replace numeric entities
+		$string = preg_replace('~&#x0*([0-9a-f]+);~ei', 'unichr(hexdec("\\1"))', $string);
+		$string = preg_replace('~&#0*([0-9]+);~e', 'unichr(\\1)', $string);
+		
+		 // replace literal entities
+		 if (!isset($trans_tbl))
+		 {
+			  $trans_tbl = array();
+			 
+			  foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key)
+					$trans_tbl[$key] = utf8_encode($val);
+		 }
+		
+		 return strtr($string, $trans_tbl);
+	}
+	
+	function unichr($c) {
+		 if ($c <= 0x7F) {
+			  return chr($c);
+		 } else if ($c <= 0x7FF) {
+			  return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
+		 } else if ($c <= 0xFFFF) {
+			  return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
+													. chr(0x80 | $c & 0x3F);
+		 } else if ($c <= 0x10FFFF) {
+			  return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
+													. chr(0x80 | $c >> 6 & 0x3F)
+													. chr(0x80 | $c & 0x3F);
+		 } else {
+			  return false;
+		 }
+	}
+	
+	function code2utf($num)
+	{
+		 if ($num < 128) return chr($num);
+		 if ($num < 2048) return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+		 if ($num < 65536) return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+		 if ($num < 2097152) return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+		 return '';
+	}
+}else {
+	function html_entity_decode_utf8($text) {
+		return html_entity_decode($text, ENT_QUOTES, 'utf-8');
 	}
 }
 ?>

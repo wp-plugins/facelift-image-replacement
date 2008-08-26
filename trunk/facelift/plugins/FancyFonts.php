@@ -27,13 +27,17 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 
 $PLUGIN_ERROR = false;
-define('FULL_CACHE_PATH', getcwd().'/'.$cache);
+define('FULL_CACHE_PATH', fix_path(getcwd().'/'.$FLIR['cache']));
+define('CONVERT', IM_EXEC_PATH.'convert');
+
+if(DEBUG && file_exists(FULL_CACHE_PATH))
+	unlink(FULL_CACHE_PATH);
 
 $image = false;
 
-if($text[0] == '@') $text = '\\'.$text;
+if($FLIR['text'][0] == '@') $FLIR['text'] = '\\'.$FLIR['text'];
 
-$bounds = convertBoundingBox(imagettfbbox($size, 0, $font, $text));
+$bounds = convertBoundingBox(imagettfbbox($FLIR['size_pts'], 0, $FLIR['font'], $FLIR['text']));
 
 $fulltrim = '';
 if($FStyle['realFontHeight']!='true') {
@@ -42,28 +46,38 @@ if($FStyle['realFontHeight']!='true') {
 	$fulltrim = '-trim +repage';
 }
 	
-$fore_hex = dec2hex($color['red'], $color['green'], $color['blue']);
-$bkg_hex = dec2hex(abs($color['red']-100), abs($color['green']-100), abs($color['blue']-100));
-$dpi = preg_match('#^[0-9]+$#', $FStyle['dpi']) ? $FStyle['dpi'] : 96;
-$size = $size + ($size-((72/$dpi)*$size));
+$fore_hex = dec2hex($FLIR['color']['red'], $FLIR['color']['green'], $FLIR['color']['blue']);
+$bkg_hex = dec2hex(abs($FLIR['color']['red']-100), abs($FLIR['color']['green']-100), abs($FLIR['color']['blue']-100));
 
-if($FStyle['ff_BlurEdges']=='true')
-	$size+=2; // + 2 is to compensate for the blur we're adding
+$opacity = '';
+if($FLIR['opacity'] < 100 && $FLIR['opacity'] >= 0)
+	$opacity = strlen($FLIR['opacity']) == 1 ? '0'.$FLIR['opacity'] : (strlen($FLIR['opacity'])>2?substr($FLIR['opacity'], 0, 2) : $FLIR['opacity']);
 
-$cmd = IM_EXEC_PATH.'convert -size '.($bounds['width']+500).'x'.$REAL_HEIGHT_BOUNDS['height'].' -background none -channel RGBA -fill "#'.$fore_hex.'" -font "'.$font.'" -pointsize '.$size.' -gravity center'.' caption:"'.addcslashes($text, '"').'" -flatten '.$fulltrim.' "'.FULL_CACHE_PATH.'"';
+switch($FStyle['cAlign']) {
+	default:
+		$align = 'east';
+		break;
+	case '':
+		$align = 'west';
+		break;
+	case '':
+		$align = 'center';
+		break;
+}
 
+$cmd = CONVERT.' -size '.($bounds['width']+500).'x'.$REAL_HEIGHT_BOUNDS['height'].' xc:transparent '
+					.' -fill '.escapeshellarg('#'.$fore_hex.$opacity)
+					.' -font '.escapeshellarg(fix_path($FLIR['font']))
+					.' -density '.$FLIR['dpi'].' -pointsize '.$FLIR['size_pts'].' -gravity '.$align
+					.' caption:'.escapeshellarg($FLIR['text'])
+					.' -flatten '.$fulltrim.' '.escapeshellarg(FULL_CACHE_PATH); 
 
-/*
-header('Content-encoding: utf-8');
-header('Content-type: text/plain');
-die($cmd);
-*/
-
+//die($cmd);
 exec($cmd);
 
 if($FStyle['ff_BlurEdges']=='true') {
-	$cmd2 = IM_EXEC_PATH.'convert "'.FULL_CACHE_PATH.'" -matte -virtual-pixel transparent -channel A -blur 0x0.4  -level 0,50%  "'.FULL_CACHE_PATH.'"';	
-//	exec($cmd2);
+	$cmd2 = CONVERT.' '.escapeshellarg(FULL_CACHE_PATH).' -matte -virtual-pixel transparent -channel A -blur 0x0.4  -level 0,50%  '.escapeshellarg(FULL_CACHE_PATH);	
+	exec($cmd2);
 }
 
 
@@ -81,6 +95,6 @@ if($FStyle['realFontHeight']=='true') { // trim sides
 	$info = shell_exec(IM_EXEC_PATH.'convert "'.FULL_CACHE_PATH.'" -trim info:');
 	preg_match('#PNG ([0-9]+)x([0-9]+) ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)#', $info, $m);
 	
-	exec(IM_EXEC_PATH.'convert "'.FULL_CACHE_PATH.'" -crop '.$m[1].'x'.$m[4].$m[5].'+0 +repage "'.FULL_CACHE_PATH.'"');
+	exec(IM_EXEC_PATH.'convert '.escapeshellarg(FULL_CACHE_PATH).' -crop '.$m[1].'x'.$m[4].$m[5].'+0 +repage '.escapeshellarg(FULL_CACHE_PATH));
 }
 ?>

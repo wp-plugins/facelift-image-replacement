@@ -3,8 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Facelift Image Replacement | Examples</title>
-<script language="javascript" src="flir.js"></script>
-<!--script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script-->
+<script language="javascript" src="flir.js?<?php echo md5(microtime()); ?>"></script>
+<?php
+/*
+	if(false === strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'firefox') || false !== strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'opera'))
+		echo "<script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>";
+*/
+?>
 <!--
 
 		This page serves to show visual examples of what Facelift can do.  Because of this, some of 
@@ -12,6 +17,7 @@
 
 -->
 <style type="text/css">
+
 html, body {
 	padding:0;
 	margin:0;
@@ -154,6 +160,7 @@ h2 {
 }
 a.update {
 	float:right;
+	font-size:18px;
 	display:block;
 	background:url(http://facelift.mawhorter.net/i/btn-flir-update.png) no-repeat;
 	width:150px;
@@ -209,10 +216,14 @@ a.update:hover {
 #hover-4 #link-2:hover {
 	color:darkblue;
 }
-#hover-5 {
-	font-size:58px;
+
+@font-face {
+  font-family: tribal;
+  src: url("fonts/Tribal_Font.ttf") format('truetype');
 }
+h2 { font-family: tribal, serif }
 </style>
+
 <!--[if IE]>
 <style type="text/css">
 /* This just fixes a CSS rendering problem in IE. */
@@ -221,6 +232,7 @@ a.update:hover {
 <![endif]-->
 </head>
 <body>
+<a href="?<?php md5(microtime()); ?>">Reload Page</a>
 <div id="c">
   <div id="menu">
     <ul id="menu">
@@ -247,7 +259,7 @@ a.update:hover {
         <p>Elements can be replaced automatically or one at a time.  FLIR will automatically grab the text from the element and replace it with an image using your custom font.</p>
       </li>
       <li id="example"> <a class="update" href="javascript: void(0);" onclick="if(this.flir_replaced) return; FLIR.replace(FLIR.getChildren(FLIR.getParentNode(this))[1]); this.flir_replaced=true;">Update It!</a>
-        <h2 style="font-family: Antagea, Arial, Helvetica, sans-serif;">An ordinary heading with a different font</h2>
+        <h2 style="font-family: Antagea, Arial, Helvetica, sans-serif;">An ordinary + heading with a different font</h2>
         <p>The replacement image is dynamically generated using the CSS styles that you have applied to the element.  This is the default behavior but you can also disable it and set styles, and replace elements, one at a time.</p>
       </li>
       <li id="example"> <a class="update" href="javascript: void(0);" onclick="if(this.flir_replaced) return; FLIR.replace(FLIR.getChildren(FLIR.getParentNode(this))[1]); this.flir_replaced=true;">Update It!</a>
@@ -255,10 +267,10 @@ a.update:hover {
         <p>With FLIR, you are not limited to one font and color with your replacement images.  Add as many fonts and colors as you wish to your elements and they will be detected and replaced &mdash; automatically.</p>
       </li>
       <li id="example"> <a class="update" href="javascript: void(0);" onclick="if(this.flir_replaced) return; FLIR.replace(FLIR.getChildren(FLIR.getParentNode(this))[1], new FLIRStyle({mode:'wrap'})); this.flir_replaced=true;">Update It!</a>
-        <h2 style="margin-right:150px; text-align:center;">Maybe you have a really long header that you would like to wrap down to the next line.  You know, so there are multiple lines of text.  You can even align it to the left, center, or right.  This text is center aligned.</h2>
+        <h2 style="margin-right:150px; text-align:center; line-height:150%; letter-spacing:0.1em;">Maybe you have a really long header that you would like to wrap down to the next line.  You know, so there are multiple lines of text.  You can even align it to the left, center, or right.  This text is center aligned and has a line-height of 150% and a letter-spacing of 0.1em.</h2>
         <p>Image replacements can be generated usng three separate modes: stretch, progressive, and wrap &mdash; which is the mode you see above.  They can be set on an element to element basis or only once. </p>
         <p>Progressive will shrink the text size of the generated image until it fits inside the HTML elements box.</p>
-        <p>Stretch will generate an image and resize the HTML element to contain it.</p>
+        <p>The default mode will generate an image and resize the HTML element to contain it.</p>
       </li>
       <li id="example" class="ex-bkg"> <a class="update" href="javascript: void(0);" onclick="if(this.flir_replaced) return; FLIR.replace(FLIR.getChildren(FLIR.getParentNode(this))[1]); this.flir_replaced=true;">Update It!</a>
         <h2 class="example-bkg">How 'bout with a background?</h2>
@@ -301,17 +313,23 @@ a.update:hover {
 function get(n) { return document.getElementById(n); }
 
 FLIR.init();
-// You must have ImageMagick to use the fancyfonts plugin.
-//FLIR.addClassStyle('auto', new FLIRStyle({ mode:'fancyfonts' }));
 
-FLIR.auto(['h1','h2.auto','h3#spacing','a.update', 'p.unicode']);
+// You must have ImageMagick to use the fancyfonts and quickeffects plugins.
+FLIR.addClassStyle('auto', new FLIRStyle({ mode:'fancyfonts' }));
+
+
+
+FLIR.auto(['h1','h2.auto','h2#test','h3#spacing','a.update', 'p.unicode']);
+FLIR.replace('li.quickeffects h2', new FLIRStyle( { mode:'quickeffects' } ) );
 
 FLIR.replace(get('hover-1'));
 FLIR.replace(get('hover-2'), new FLIRStyle({ mode:'fancyfonts', realFontHeight:true } ) );
+
 FLIR.replace(get('hover-3'), new FLIRStyle({ mode:'fancyfonts', realFontHeight:true } ) );
-FLIR.replace(get('hover-4'), new FLIRStyle({ mode:'fancyfonts', realFontHeight:true } ) );
-//FLIR.replace(get('hover-5'), new FLIRStyle({ mode:'quickeffects', realFontHeight:true }, new FLIRStyle( { mode:'quickeffects', qe_Shadow:'low', qe_Stroke:'2,FFFFFF', realFontHeight:true, cColor:'3333CC' } ) ));
+FLIR.replace(get('hover-4'), new FLIRStyle({ mode:'quickeffects', realFontHeight:true, qe_Extrude:'se,2,999999' } ) );
+//FLIR.replace(get('hover-5'), new FLIRStyle({ mode:'quickeffects', realFontHeight:true }, new FLIRStyle( { mode:'quickeffects', qe_Shadow:'low', qe_Stroke:'2,FFFFFF', qe_Highlight: 'se,2,000000', qe_Fill:'pattern,qe-pattern-fill-texture.jpg', realFontHeight:true, cColor:'3333CC' } ) ));
 FLIR.replace(get('hover-6'), new FLIRStyle({ useBackgroundMethod:true } ) );
+
 </script>
 </body>
 </html>
