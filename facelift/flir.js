@@ -24,7 +24,7 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 var FLIR = {
-	version: '1.2 beta3'
+	version: '1.2 beta3-3'
 	
 	,path: ''
 	,classnameIgnore: false

@@ -22,13 +22,13 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-require('config-flir.php');
-require('inc-flir.php');
-
 define('DEBUG', false);
 define('ENABLE_FONTSIZE_BUG', false);
 
 define('IS_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
+
+require('config-flir.php');
+require('inc-flir.php');
 
 if(version_compare(PHP_VERSION, '4.3.0', '<'))
 	die($ERROR_MSGS['PHP_TOO_OLD']);
