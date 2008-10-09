@@ -3,8 +3,8 @@ Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.5
-Tested up to: 2.6.1
-Stable tag: 0.7.7
+Tested up to: 2.7
+Stable tag: 0.8.0
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -28,8 +28,6 @@ Before running autoupdate please empty your `facelift/cache` folder.
 
 = IMPORTANT: If using a version prior to 0.7.0 please <em>delete</em> your existing version before installing this version =
 
-Before running autoupdate please empty your `facelift/cache` folder.
-
 PHP and GD. Little testing has been done with different versions of PHP. If you have PHP 5 with GD enabled you shouldn't have any problems. PHP 4 currently has some issues but should be resolved in the next release of Facelift. A newer version of ImageMagick (6.3.7+) is required for the FancyFonts and QuickEffects plugins.
 
 If GD is not installed on your server you will have to recompile PHP to include GD. If you are comfortable in WHM for cPanel, you can do that under the "Update Apache" tab (check the "GD" box). Check your settings carefully (especially the PHP version - cPanel may try to change it) before you hit build. Plesk and ISPConfig should have GD enabled by default.  If you are not comfortable doing it yourself, ask your hosting company to do it for you. (Thanks Steve!)
@@ -40,13 +38,13 @@ If GD is not installed on your server you will have to recompile PHP to include 
 3. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable
 4. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
 5. Activate plugin in WordPress admin panel
-5. Set FLIR configuration in the admin panel - config-flir.php must be writable for changes to take effect.
+5. Set FLIR configuration in the admin panel - `config-flir.php` must be writable for changes to take effect.
 7. Customize tags for FLIR on FLIR submenu under the Design menu
 
 = Notes =
 
 * QuickEffect Plugin is not implemented yet
-* If using a version older than 0.7 completely delete any old verions before upgrading as this plugin is under rapid development
+* If using a version older than 0.7 completely delete any old verions before upgrading
 * You cannot auto-upgrade from versions older 0.7.0
 * Text remains intact in source so search engines see your page as text!
 
@@ -69,7 +67,7 @@ If GD is not installed on your server you will have to recompile PHP to include 
 
 = Is FLIR be configurable from the admin panel? =
 
-FLIR is almost completly configurable from the admin panel.  Eventually it is planned to be able to configure FLIR almost completely from the admin panel.  At present to configure how and what fonts are used with flir and certain element to be replaced by FLIR.
+FLIR is almost completely configurable from the admin panel.  Eventually it is planned to be able to configure FLIR almost completely from the admin panel.  At present to configure how and what fonts are used with flir and certain element to be replaced by FLIR.
 
 = Will the FLIR plugins be usable? =
 
@@ -98,13 +96,44 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 
 == Known Issues ==
 
-* Automatically updating the plugin does not always work - I have not tracked down the issue but I suspect it has to do with the cache folder.  Before running autoupdate please empty your `facelift/cache` folder.
+* Automatically updating the plugin may not work.  This is most likely caused by the cache folder files being owned by www-data rather than the account holder for the web site.  On deactivation the plugin now clears the cache folder and hopefully eliminates this issues.
+* Rendering in Konqueror is incorrect and displays all rendered text as the default size and black.
 
 == Changelog ==
 
+= 0.8.0 =
+
+* Updated Facelift to 1.2 release
+ * Font Collections
+ * Basic Callback Functions
+ * Better error handling
+ * Bug in generateURL causing HTML not to be sanitized
+ * Added functionality/bug fixes for “wrap” mode.  Better line-height support.
+ * Rewrote element replacement algorithm. You no longer need to encapsulate plain text in span elements to have it replaced.  The new algo is recursive so it can replace any number of child elements.  You could even run it on document.body if you wanted to!
+ * Added flir-image and flir-span classnames to the elements flir creates
+ * Javascript Plugin support!
+ * Moved DetectImageState code from facelift.js into a Javascript plugin
+ * querySelectorAll support for the browsers that support it (Safari, FF3.1 alpha)
+ * Font size modifier for cSize in FLIRStyle. You can now specify a font size calculation to be applied against the CSS font size.  For example, if you want the generated image to have a font size that is 140% the one you specified in your CSS you could do   cSize:’*1.4'.  All font sizes will then be multipled by 1.4.
+ * FLIRStyle.buildURL no longer requires an HTML object to be passed
+ * Hover caching problems fixed.  Better hover style support.
+ * JPG and GIF support! Set the “output” option in FLIRStyle.  The default output option is auto.  Auto will cause the generated image to be a transparent png if the element doesn’t have a background color set.  Otherwise it will use GIF.
+ * Hover now only works with <A> elements.
+* Rewrote code for better readability and adherence to code conventions (hopefully)
+* Redesigned admin interface to be more logically organized (again, hopefully)
+ * Added more helpful information to the configuration text.
+* Added ability to specify all elements to replace rather than just the few I had.
+* For example you can specify something like h1,h2,div#sidebar a to have your h1, h2 headers and all of the sidebar links replaced.
+* Fixed deactivation routine to preserve config-flir.php during auto upgrade.
+ * If manually upgrading please deactivate plugin before upgrading to ensure config-flir.php is configured correctly. 
+
+= 0.7.7 =
+
+* Updated Facelift to 1.2b3-3
+
 = 0.7.6 =
 
-* Updated Facelift to 1.2b3.2 
+* Updated Facelift to 1.2b3-2 
 
 = 0.7.5 =
 
@@ -152,12 +181,11 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 = 0.3.0 =
 
 * Initial Release
-* Auto redering of `<h1>` to `<h5>` only
+* Auto rendering of `<h1>` to `<h5>` only
 * Using Facelift 1.1
 
 == Upcoming Features ==
 
-* User defined element replacement ~v0.8
 * Quick Effects (requires ImageMagick) ~v0.9
 * More...
 
