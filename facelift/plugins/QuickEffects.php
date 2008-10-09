@@ -2,7 +2,7 @@
 // JavaScript Document
 
 /*
-QuickEffects v0.2
+QuickEffects v0.3.1
 
 Facelift was written and is maintained by Cory Mawhorter.  
 It is available from http://facelift.mawhorter.net/
@@ -22,7 +22,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+along with Facelift Image Replacement.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 function add_girth($wh, $bHeight=false) {
@@ -54,6 +54,8 @@ if(DEBUG && file_exists(FULL_CACHE_PATH))
 $image = false;
 
 if($FLIR['text'][0] == '@') $FLIR['text'] = '\\'.$FLIR['text'];
+if(substr_count($FLIR['text'], ' ') == strlen($FLIR['text'])) exit;
+
 $cmdtext = escapeshellarg($FLIR['text']);
 
 $bounds = convertBoundingBox(imagettfbbox($FLIR['size_pts'], 0, $FLIR['font'], $FLIR['text']));
@@ -66,9 +68,10 @@ if($FStyle['realFontHeight']!='true') {
 }
 	
 $fore_hex = dec2hex($FLIR['color']['red'], $FLIR['color']['green'], $FLIR['color']['blue']);
-$bkg_hex = dec2hex(abs($FLIR['color']['red']-100), abs($FLIR['color']['green']-100), abs($FLIR['color']['blue']-100));
+$bkg_hex = $FLIR['output'] == 'png' ? 'transparent' : ('"#'.dec2hex($FLIR['bkgcolor']['red'], $FLIR['bkgcolor']['green'], $FLIR['bkgcolor']['blue']).'"');
 $out_width  = $bounds['width']+300;
 $out_height = $REAL_HEIGHT_BOUNDS['height'];
+
 
 $opacity = '';
 if($FLIR['opacity'] < 100 && $FLIR['opacity'] >= 0)
@@ -77,7 +80,7 @@ if($FLIR['opacity'] < 100 && $FLIR['opacity'] >= 0)
 $add_width = $add_height = 0;
 
 $stroke = '';
-$strokwidth = 0;
+$strokewidth = 0;
 if(isset($FStyle['qe_Stroke'])) {
 	list($strokewidth, $strokecolor, $quality) = explode(',', $FStyle['qe_Stroke'], 3);
 	
@@ -94,7 +97,7 @@ if(isset($FStyle['qe_Stroke'])) {
 			$stroke .= '-fill '.$strokecolor.' -annotate 0x0-'.$i.'+'.$i.' '.$cmdtext.' ';
 		}
 	}else {
-		$stroke = '-strokewidth '.$strokwidth.' -stroke '.$strokecolor;
+		$stroke = '-strokewidth '.$strokewidth.' -stroke '.$strokecolor;
 	}
 	
 	add_girth($strokewidth*2);
@@ -106,7 +109,7 @@ if(isset($FStyle['qe_Fill'])) {
 	list($fill_type, $fill_options) = explode(',', $FStyle['qe_Fill'], 2);
 	switch($fill_type) {
 		case 'pattern':
-			$pattern_file = QE_DIR.'/'.basename($fill_options);
+			$pattern_file = QE_DIR.(IS_WINDOWS?'\\':'/').basename($fill_options);
 			if(!file_exists($pattern_file))
 				die('Pattern file does not exists.  Be sure that you have uploaded the pattern file to the QuickEffects directory.');
 			$fill = '-tile '.escapeshellarg($pattern_file).' ';
@@ -125,19 +128,18 @@ $extrude = '';
 if(isset($FStyle['qe_Extrude'])) {
 	list($extrudedirection, $extrudewidth, $extrudecolor) = explode(',', $FStyle['qe_Extrude'], 3);
 	
-	
 	$extrudewidth=trim($extrudewidth);
 	$extrudecolor=trim($extrudecolor);
 	$extrudewidth = is_number($extrudewidth)?$extrudewidth:1;
 	$extrudecolor = escapeshellarg('#'.(is_hexcolor($extrudecolor)?strtoupper($extrudecolor):'FF0000').$opacity);
 
-	add_girth($width*2);
-	add_girth($width*2, true);
+	add_girth($extrudewidth*2);
+	add_girth($extrudewidth*2, true);
 	
 	$offset = $strokewidth;
 	
 	for($i=$strokewidth; $i < ($extrudewidth+$strokewidth); $i++) {
-		$extrude .= '-fill '.$color.' -annotate 0x0';
+		$extrude .= '-fill '.$extrudecolor.' -annotate 0x0';
 		switch($extrudedirection) {
 			case 'ne':
 				$extrude .= '+'.$i.'-'.$i;
@@ -155,6 +157,14 @@ if(isset($FStyle['qe_Extrude'])) {
 		}
 		$extrude .= ' '.$cmdtext.' ';
 	}
+	
+	if($offset>0) {
+		add_girth(($extrudewidth+$strokewidth)*2);
+		add_girth(($extrudewidth+$strokewidth)*2, true);
+	}else {
+		add_girth($extrudewidth*2);
+		add_girth($extrudewidth*2, true);
+	}
 }
 
 // SHADOW
@@ -165,25 +175,29 @@ if(isset($FStyle['qe_Shadow'])) {
 			$shadow = array('opacity' 		=> 55
 								,'sigma' 		=> 3
 								,'left' => '+2'
-								,'top' 	=> '+2');
+								,'top' 	=> '+2'
+								,'color' => '000000');
 			break;
 		case 'low':
 			$shadow = array('opacity' 		=> 65
 								,'sigma' 		=> 2
 								,'left' => '+2'
-								,'top' 	=> '+2');
+								,'top' 	=> '+2'
+								,'color' => '000000');
 			break;
 		case 'fuzzy':
 			$shadow = array('opacity' 		=> 55
 								,'sigma' 		=> 4
 								,'left' => '+0'
-								,'top' 	=> '+0');
+								,'top' 	=> '+0'
+								,'color' => '000000');
 			break;
 		case 'hard':
 			$shadow = array('opacity' 		=> 90
 								,'sigma' 		=> 0
 								,'left' => '+1'
-								,'top' 	=> '+1');
+								,'top' 	=> '+1'
+								,'color' => '000000');
 			break;
 /*
 		case 'perspective':
@@ -195,19 +209,21 @@ if(isset($FStyle['qe_Shadow'])) {
 		*/
 		
 		default:
-			list($shadow_opac, $shadow_sig, $shadow_ol, $shadow_ot) = explode(',', $FStyle['qe_Shadow'], 4);
+			list($shadow_opac, $shadow_sig, $shadow_ol, $shadow_ot, $shadow_color) = explode(',', $FStyle['qe_Shadow'], 4);
 			$shadow_opac = (is_number($shadow_opac) && $shadow_opac<=100) ? $shadow_opac : 75;
 			$shadow_sig = is_number($shadow_sig)?$shadow_sig:2;
 			$shadow_ol = preg_match('#^[+-][0-9]{1,4}$#', $shadow_ol)?$shadow_ol:'+2';
 			$shadow_ot = preg_match('#^[+-][0-9]{1,4}$#', $shadow_ot)?$shadow_ot:'+2';
+			$shadow_color = is_hexcolor($shadow_color)?strtoupper($shadow_color):'FF0000';
 			$shadow = array('opacity' 	=> $shadow_opac
 								,'sigma' 	=> $shadow_sig
 								,'left' 		=> $shadow_ol
-								,'top' 		=> $shadow_ot);
+								,'top' 		=> $shadow_ot
+								,'color'		=> $shadow_color);
 			break;
 	}
 	
-	$shadow = (IS_WINDOWS?'':'\\').'( +clone -background black  -shadow '.$shadow['opacity'].'x'.$shadow['sigma'].$shadow['left'].$shadow['top'].' '.(IS_WINDOWS?'':'\\').') +swap -background none ';
+	$shadow = (IS_WINDOWS?'':'\\').'( +clone -background '.escapeshellarg('#'.$shadow['color']).'  -shadow '.$shadow['opacity'].'x'.$shadow['sigma'].$shadow['left'].$shadow['top'].' '.(IS_WINDOWS?'':'\\').' ) +swap -background none -mosaic -matte ';
 	
 	$left = substr($shadow['offset-left'], 1);
 	$top = substr($shadow['offset-top'], 1);
@@ -221,33 +237,24 @@ if(isset($FStyle['qe_Shadow'])) {
 $out_width 	+= $add_width;
 $out_height += $add_height;
 
-$cmd = CONVERT.' -size '.$out_width.'x'.$out_height.' xc:transparent '
+$cmd = CONVERT.' -size '.$out_width.'x'.$out_height.' xc:'.$bkg_hex.' '
 					.'-font '.escapeshellarg(fix_path($FLIR['font']))
-					.' -density '.$FLIR['dpi'].' -pointsize '.$FLIR['size_pts'].' -gravity Center '
+					.' -density '.$FLIR['dpi'].' -pointsize '.$FLIR['size_pts'].' -gravity North '
 					.$extrude.' '
 					.$stroke.' '
 					.$fill.' '
 					.' -annotate 0 '.$cmdtext.' '
 					.$shadow.' '
-					.' -mosaic -flatten '.$fulltrim.' '.escapeshellarg(FULL_CACHE_PATH);
+					.' '.$fulltrim.' '.escapeshellarg(FULL_CACHE_PATH);
 
 //die($cmd);
 exec($cmd);
 
 if($FStyle['realFontHeight']=='true') { // trim sides
-	/*
-		 [0] => PNG 207x71 274x113+4+32
-		 [1] => 207
-		 [2] => 71
-		 [3] => 274
-		 [4] => 113
-		 [5] => +4
-		 [6] => +32
-	*/
 	$info = shell_exec(CONVERT.' '.escapeshellarg(FULL_CACHE_PATH).' -trim info:');
-	if(preg_match('#PNG ([0-9]+)x([0-9]+) ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)#', $info, $m))
+	if(preg_match('#(PNG|GIF|JPEG) ([0-9]+)x([0-9]+) ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)#', $info, $m))
 		exec(CONVERT.' '.escapeshellarg(FULL_CACHE_PATH)
-				.' -crop '.$m[1].'x'.$m[4].$m[5].'+0 +repage '
+				.' -crop '.$m[2].'x'.$m[5].$m[6].'+0 +repage '
 				.escapeshellarg(FULL_CACHE_PATH));
 }
 
