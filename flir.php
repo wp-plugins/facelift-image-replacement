@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.8.0
+Version: 0.8.5
 Author URI: http://www.23systems.net/
 */
 global $g_flir_url, $g_facelift_url;
@@ -303,7 +303,7 @@ if (!class_exists('wp_flir')) {
       }
       ?>
 		<div class="wrap">
-			<h2><?php _e('FLIR for WordPress Configuration v0.8.0 (Facelift v1.2)', 'FLIR');?></h2>
+			<h2><?php _e('FLIR for WordPress Configuration v0.8.5 (Facelift v1.2)', 'FLIR');?></h2>
 			<br style="clear:both;" />
 <?php
 			require('admin/flir-config.php');
