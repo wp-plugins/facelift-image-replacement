@@ -75,11 +75,13 @@ if (!class_exists('wp_flir')) {
   	
       add_action("admin_menu", array(&$this, "addAdminPages"));
       add_action("admin_head", array(&$this, "addAdminCss"));
-      add_action("init", array(&$this, "addScripts"));
-      add_action("wp_footer", array(&$this, 'wpFooterIntercept'));
 //      add_action("wp_head", array(&$this, "add_css"));
       $this->adminOptions = $this->getAdminOptions($this->adminOptionsName);
       $this->adminConfig = $this->getAdminOptions($this->adminConfigName);
+      if (!($this->detect_ie())) {
+        add_action("init", array(&$this, "addScripts"));
+        add_action("wp_footer", array(&$this, 'wpFooterIntercept'));
+      }
       $this->adminInit = get_option($this->adminInitName);
 			if (!$this->adminInit) {
 		  	$this->flirInit();
@@ -101,9 +103,11 @@ if (!class_exists('wp_flir')) {
           $pluginDir 		          = 'plugins';
           $horizontalTextBounds   = $flirConfig['horizontal_text_bounds'];
           $javascriptMethod       = $flirConfig['javascript_method'];
+	        $externalJavaScript     = $flirConfig['external_javascript'];
           $fontsList              = $flirConfig['fonts_list'];
           $fontDefault            = $flirConfig['font_default'];
           $imagemagickPath        = $flirConfig['imagemagick_path'];
+          $dropIE                 = $flirConfig['drop_ie'];
           $elementList            = $flirConfig['element_types'];
         }
         else {
@@ -133,10 +137,12 @@ if (!class_exists('wp_flir')) {
           $pluginDir 		          = 'plugins';
   	      $horizontalTextBounds   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   	      $javascriptMethod       = 'automatic';
+  	      $externalJavaScript     = '0';
   	      $fontsList              = $baseFontsList;
   	      $fontDefault            = $fontDefault;
   	      $imagemagickPath        = '/usr/bin/';
-  	      $elementList            = explode(",","h1,h2,h3,h4,h5,h6,small,blockquote");
+  	      $dropIE                 = '0';
+  	      $elementList            = explode(",","h1,h2,h3,h4,h5");
   	      $configOptions = array(
   	        "unknown_font_size"       => $unknownFontSize,
   	        "cache_cleanup_frequency" => $cacheCleanupFrequency,
@@ -146,9 +152,11 @@ if (!class_exists('wp_flir')) {
             "plugin_dir"							=> $pluginDir,
   	        "horizontal_text_bounds"  => $horizontalTextBounds,
   	        "javascript_method"       => $javascriptMethod,
+  	        "external_javascript"     => $externalJavaScript,
   	        "fonts_list"              => $fontsList,
   	        "font_default"            => $fontDefault,
   	        "imagemagick_path"        => $imagemagickPath,
+  	        "drop_ie"                 => $dropIE,
   	        "element_types"           => $elementList,
   	      );
   			  $this->saveAdminOptions($this->adminConfigName, $configOptions);
@@ -172,8 +180,6 @@ if (!class_exists('wp_flir')) {
     function saveAdminOptions($optionsname, $options) {
       update_option($optionsname, $options);
     }
-
-
 
     function addAdminPages() {
       add_submenu_page('themes.php', "FLIR", "FLIR", 10, "FLIR", array(&$this, "outputSubAdminPage"));
@@ -219,12 +225,14 @@ if (!class_exists('wp_flir')) {
           $pluginDir 		          = 'plugins';
           $horizontalTextBounds   = $_POST[horizontal_text_bounds];
           $javascriptMethod       = $_POST[javascript_method];
+	        $externalJavaScript     = $_POST[external_javascript];
           $fontsPost              = $_POST[fonts_list];
           foreach ($fontsPost as $value) {
 						$fontsList[$this->keyMaker($value)] = $value;
 					}
           $fontDefault            = $_POST[font_default];
           $imagemagickPath        = $_POST[imagemagick_path];
+          $dropIE                 = $_POST[drop_ie];
           $elementTypes           = $_POST[element_types];
           $elementList            = explode(",", $elementTypes);
           $configOptions = array(
@@ -236,9 +244,11 @@ if (!class_exists('wp_flir')) {
             "plugin_dir"							=> $pluginDir,
             "horizontal_text_bounds"  => $horizontalTextBounds,
             "javascript_method"       => $javascriptMethod,
+            "external_javascript"     => $externalJavaScript,
             "fonts_list"              => $fontsList,
             "font_default"            => $fontDefault,
             "imagemagick_path"        => $imagemagickPath,
+            "drop_ie"                 => $dropIE,
             "element_types"           => $elementList,
           );
           $this->configSet = true;
@@ -307,7 +317,6 @@ if (!class_exists('wp_flir')) {
   ?>
         <script type="text/javascript">
 		<!--
-		jQuery('.postbox h3').prepend('<a class="togbox">+</a> ');
 		jQuery('.postbox h3').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); } );
 		jQuery('.postbox.close-me').each(function(){
 		jQuery(this).addClass("closed");
@@ -320,23 +329,38 @@ if (!class_exists('wp_flir')) {
     /*---- load JavaScripts scripts ----*/
     function addScripts() {
       global $g_facelift_url, $g_flir_method;
-
 				if (!empty($this->adminConfig)) {
-  				$flirConfig    = $this->getAdminOptions($this->adminConfigName);
+  				$flirConfig     = $this->getAdminOptions($this->adminConfigName);
 	        $g_flir_method  = $flirConfig['javascript_method'];
 				}
-      	if ($g_flir_method == 'jquery') {      
-      		wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("jquery"), 0.1);
-      	}
-      	elseif  ($g_flir_method == 'scriptaculous') {
-      		wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("scriptaculous"), 0.1);
-      	}
-      	elseif  ($g_flir_method == 'prototype') {
-      		wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("prototype"), 0.1);
-      	}
-      	else {
-      		wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);				
-				}
+				switch ($g_flir_method) {
+          case 'jquery':
+            if (!($this->external_js())) {
+          		wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("jquery"), 0.1);
+          	}
+          	else {
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            }
+            break;
+          case 'scriptaculous':
+        	  if (!($this->external_js())) {
+        		  wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("scriptaculous"), 0.1);
+        		}
+        		else {
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            }
+            break;
+          case 'prototype':
+        	  if (!($this->external_js())) {
+        		  wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("prototype"), 0.1);
+        		}
+        		else {
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            }
+            break;
+          default:
+            wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+        }
     }
 
     /*---- Called by the action wp_footer ----*/
@@ -354,47 +378,62 @@ if (!class_exists('wp_flir')) {
 					if ($defaultFancyFonts) { $setDefaultFancyFonts = ", mode:'fancyfonts'"; } else { $setDefaultFancyFonts = ""; }
 				}
 				if (!empty($this->adminConfig)) {
-  				$flirConfig  = $this->getAdminOptions($this->adminConfigName);
+  				$flirConfig     = $this->getAdminOptions($this->adminConfigName);
 	        $g_flir_method  = $flirConfig['javascript_method'];
 				}
-				if ($g_flir_method == 'jquery') {
-					echo '<script type="text/javascript">'.$this->eol();
-					echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
-					if (!empty($elementsForFlir)) {
-						echo 'jQuery(function($){'.$this->eol();
-						echo '    $(document).ready(function(){'.$this->eol();
-							foreach ($elementsForFlir as $key => $value) {
-							  if ($elementFancyFonts[$key] == $value) { $fancyFonts = ", mode:'fancyfonts'"; } else { $fancyFonts = ""; }
-								echo '    $("'.$value.'").each( function() { FLIR.replace(this, new FLIRStyle({mode:\''.$elementMode[$key].'\',cFont:\''.$elementFonts[$key].'\''.$fancyFonts.'}));});'.$this->eol();
-							}
-						echo '    });'.$this->eol();
-						echo '});'.$this->eol();
-					}
-					else {
-						echo "FLIR.auto();".$this->eol();
-					}
-					echo '</script>'.$this->eol();
-				}
-				elseif  ($g_flir_method == 'prototype' || $g_flir_method == 'scriptaculous') {
-					echo '<script type="text/javascript">'.$this->eol();
-   				echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
-	      	if (!empty($elementsForFlir)) {
-		      	foreach ($elementsForFlir as $key => $value) {
-							if ($elementFancyFonts[$key] == $value) { $fancyFonts = ", mode:'fancyfonts'"; } else { $fancyFonts = ""; }
-							echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$elementMode[$key].'\',cFont:\''.$elementFonts[$key].'\''.$fancyFonts.'})); } );'.$this->eol();
-			    	}
-		    	}
-		    	else {
-   					echo "FLIR.auto();".$this->eol();
-   				}
-   				echo '</script>'.$this->eol();
-   			}
-				else {
-					echo '<script type="text/javascript">'.$this->eol();
-   				echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
- 					echo "FLIR.auto();".$this->eol();
- 					echo '</script>'.$this->eol();
-   			}
+				
+				switch ($g_flir_method) {
+          case 'jquery':
+  					echo '<script type="text/javascript">'.$this->eol();
+  					echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
+  					if (!empty($elementsForFlir)) {
+  						echo 'jQuery(function($){'.$this->eol();
+  						echo '    $(document).ready(function(){'.$this->eol();
+  							foreach ($elementsForFlir as $key => $value) {
+  							  if ($elementFancyFonts[$key] == $value) { $fancyFonts = ", mode:'fancyfonts'"; } else { $fancyFonts = ""; }
+  								echo '    $("'.$value.'").each( function() { FLIR.replace(this, new FLIRStyle({mode:\''.$elementMode[$key].'\',cFont:\''.$elementFonts[$key].'\''.$fancyFonts.'}));});'.$this->eol();
+  							}
+  						echo '    });'.$this->eol();
+  						echo '});'.$this->eol();
+  					}
+  					else {
+  						echo "FLIR.auto();".$this->eol();
+  					}
+  					echo '</script>'.$this->eol();
+            break;
+          case 'scriptaculous':
+          case 'prototype':
+  					echo '<script type="text/javascript">'.$this->eol();
+     				echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
+  	      	if (!empty($elementsForFlir)) {
+  		      	foreach ($elementsForFlir as $key => $value) {
+  							if ($elementFancyFonts[$key] == $value) { $fancyFonts = ", mode:'fancyfonts'"; } else { $fancyFonts = ""; }
+  							echo '$$("'.$value.'").each( function(el) { FLIR.replace(el, new FLIRStyle({mode:\''.$elementMode[$key].'\',cFont:\''.$elementFonts[$key].'\''.$fancyFonts.'})); } );'.$this->eol();
+  			    	}
+  		    	}
+  		    	else {
+     					echo "FLIR.auto();".$this->eol();
+     				}
+     				echo '</script>'.$this->eol();
+            break;
+          default:
+  					echo '<script type="text/javascript">'.$this->eol();
+     				echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
+     				if (!empty($this->adminConfig)) {
+    					$flirConfig         		= $this->getAdminOptions($this->adminConfigName);
+  	          $elementList            = $flirConfig['element_types'];
+  	        }
+  	        if (!empty($elementList)) {
+  	          $autoElements = '';
+  		      	foreach ($elementList as $key => $value) {
+  							$autoElements .= "'".$value."',";
+  			    	}
+  			    	$autoElements = rtrim($autoElements, ',');
+  			    	$autoElements = '['.$autoElements.']';
+  		    	}
+   					echo "FLIR.auto(".$autoElements.");".$this->eol();
+   					echo '</script>'.$this->eol();
+        }
 		}
 
     /*---- Adds a link to the stylesheet to the header ----*/
@@ -477,6 +516,41 @@ if (!class_exists('wp_flir')) {
   		}
 			return true; 
     }
+    
+    function external_js() {
+   		if (!empty($this->adminConfig)) {
+    		$flirConfig         		= $this->getAdminOptions($this->adminConfigName);
+	      $externalJavaScript     = $flirConfig['external_javascript'];
+			}
+			if ($externalJavaScript == 1) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
+    function detect_ie() {
+   		if (!empty($this->adminConfig)) {
+    		$flirConfig         		= $this->getAdminOptions($this->adminConfigName);
+	      $dropIE                 = $flirConfig['drop_ie'];
+			}
+			if ($dropIE == 1) {
+        $browser = get_browser();
+        if ($browser->browser == "IE") {
+          if ($browser->majorver >= 6) {
+            return true;
+          }
+          else {
+            return false;
+          }
+        }
+        else {
+          return false;        
+        }
+      }
+    }
+    
     
   }
 }

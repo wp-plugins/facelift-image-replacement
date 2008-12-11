@@ -7,9 +7,11 @@
 	          $cacheKeepTime          = $flirConfig['cache_keep_time'];
 	          $horizontalTextBounds   = $flirConfig['horizontal_text_bounds'];
 	          $javascriptMethod       = $flirConfig['javascript_method'];
+	          $externalJavaScript     = $flirConfig['external_javascript'];
 	          $fontsList              = $flirConfig['fonts_list'];
 	          $fontDefault            = $flirConfig['font_default'];
 	          $imagemagickPath        = $flirConfig['imagemagick_path'];
+	          $dropIE                 = $flirConfig['drop_ie'];
 	          $elementList            = $flirConfig['element_types'];
 					}
 ?>
@@ -42,7 +44,7 @@
 					  <option value="168"<?php if ($unknownFontSize=='168') echo ' selected="selected"'?>>168 pixels</option>
 					  <option value="180"<?php if ($unknownFontSize=='180') echo ' selected="selected"'?>>180 pixels</option>
 					</select>
-						<br /><div class="postbox close-me"><?php _e('If the font size cannot be determined automatically the font size will default to this (in pixels).<br /><strong><em>Default: 16</em></strong>',"FLIR"); ?></div></td>
+						<br /><?php _e('If the font size cannot be determined automatically the font size will default to this (in pixels).<br /><strong><em>Default: 16</em></strong>',"FLIR"); ?></td>
 					</tr>
 					<tr valign="top"><th scope="row"><strong><?php _e('Cache Cleanup Frequency',"FLIR"); ?>: </strong></th><td valign="top">
 					<select name="cache_cleanup_frequency">
@@ -80,8 +82,8 @@
 					  </select>
 					<br /><?php _e('When the cache cleanup runs, cached images that are older than the time provided here will be deleted (Unix timestamp).  This setting is irrelvent when Cache Cleanup Frequency is disabled.<br /><strong><em>Default: 1 Week</em></strong>',"FLIR"); ?></td>
 					</tr>
-					<tr valign="top"><th scope="row"><?php _e('Horizontal Text Bounds',"FLIR"); ?>: </strong></th><td valign="top">
-					  	<input name="horizontal_text_bounds" type="text" value="<?php if (empty($horizontalTextBounds)) { echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; } else {echo $horizontalTextBounds;}?>" size="80" maxlength="254" />
+					<tr valign="top"><th scope="row"><strong><?php _e('Horizontal Text Bounds',"FLIR"); ?>: </strong></th><td valign="top">
+					  	<input name="horizontal_text_bounds" type="text" value="<?php if (empty($horizontalTextBounds)) { echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; } else {echo $horizontalTextBounds;}?>" size="32" maxlength="254" />
 					  <br /><?php _e('This will only be used if some fonts have characters that will extend below the baseline. For example, p, q, or y all have tails that extend below the baseline.  The text will be used to attempt to figure out the lowest and highest point of all the characters. This will create a uniform height across all generated images for a particular font size.  You should not have to change this value unless you are working in a language that does not use the a-z alphabet or you are using a highly unusual font.<br /><strong><em>Default: A-Za-z</em></strong>',"FLIR"); ?></td>
 					</tr>
 <!--					<tr valign="top"><th scope="row"><strong><?php// _e('Font Discovery',"FLIR"); ?>: </strong></th>
@@ -96,7 +98,8 @@
 					    <option value="prototype"<?php if ($javascriptMethod=='prototype') echo ' selected="selected"'?>>Prototype</option>
 					    <option value="scriptaculous"<?php if ($javascriptMethod=='scriptaculous') echo ' selected="selected"'?>>Scriptaculous</option>
 					  </select>
-						<br /><?php _e('Choose <em>Automatic</em> or one of three JavaScript libraries to assist in the rendering.  <em>jQuery</em> seems to be the fastest but you may already be loading the <em>prototype</em> or <em>scriptaculous</em> librares and prefer one of those to minimize overhead.  <em>Automatic</em> does not use any JavaScript library but will automatically replace all <code>&lt;h1&gt;</code> to <code>&lt;h5&gt;</code> elements using the default font.<br /><strong><em>Default: jquery</em></strong>',"FLIR"); ?></td>
+					  <input type="checkbox" name="external_javascript" value="1"<?php if($externalJavaScript == 1) {echo ' checked="checked"';}?> /> Use external JavaScript library. 
+						<br /><?php _e('Choose <em>Automatic</em> or one of three JavaScript libraries to assist in the rendering.  <em>jQuery</em> seems to be the fastest but you may already be loading the <em>prototype</em> or <em>scriptaculous</em> librares and prefer one of those to minimize overhead.  <em>Automatic</em> does not use any JavaScript library but will automatically replace all the elements specified in Element Types below using the default font.<br /><strong><em>Default: Automatic</em></strong>',"FLIR"); ?></td>
 					</tr>
 					<?php
 		$baseFontsList   = array();
@@ -128,9 +131,13 @@
 					  	<input name="imagemagick_path" type="text" value="<?php if (empty($imagemagickPath)) { echo '/usr/bin/'; } else {echo $imagemagickPath;}?>" size="32" maxlength="254" />
 					  <br /><?php _e('Set this to the location of your ImageMagick binaries (with a trailing slash).  Required only if you are using Fancy Fonts or Quick Effects (see <a href="http://facelift.mawhorter.net/doc/plugins" title="Facelift Plugins" target="_blank">Facelift Plugins</a> for more details.)<br /><strong><em>Default: /usr/bin/</em></strong>',"FLIR"); ?></td>
 					</tr>
+					<tr valign="top"><th scope="row"><strong><?php _e('Disable FLIR for IE 6',"FLIR"); ?>: </strong></th><td valign="top">
+					  	<input type="checkbox" name="drop_ie" value="1"<?php if($dropIE == 1) {echo ' checked="checked"';}?> />
+					  <br /><?php _e('Check this to disable for IE 6<br /><strong><em>Default: unchecked</em></strong>',"FLIR"); ?></td>
+					</tr>
 					<tr valign="top"><th scope="row"><strong><?php _e('Element Types',"FLIR"); ?>: </strong></th><td valign="top">
-					  	<input name="element_types" type="text" value="<?php if (empty($elementList)) { echo 'h1,h2,h3,h4,h5,h6,small,blockquote'; } else {echo implode(",", $elementList);}?>" size="80" maxlength="254" />
-					  <br /><?php _e('This list the elements to display in the Elements to Replace section allowing you to add additional elements to modify. You can also specify more granular elements to replace such as <code>div#sidebar a</code> to replace the links in your sidebar.<em>Remove elements you do not intend to replace.</em><br /><strong><em>Default: h1,h2,h3,h4,h5,h6,small,blockquote</em></strong>',"FLIR"); ?></td>
+					  	<input name="element_types" type="text" value="<?php if (empty($elementList)) { echo 'h1,h2,h3,h4,h5'; } else {echo implode(",", $elementList);}?>" size="32" maxlength="254" />
+					  <br /><?php _e('This list the elements to replace. If using Automatic the default font will be used for all elements.  If using jQuery, Scriptaculous or Prototype you can specify specific fonts and modes in the Elements to Replace section, which will only appear if using a JavaScript method other than Automatic. You can also specify more granular elements to replace such as <code>div#sidebar a</code> to replace the links in your sidebar.<em>Remove elements you do not intend to replace.</em><br /><strong><em>Example: h1,h2,h3,h4,h5,h6,small,blockquote,div#postinfo,p.date,div#sidebar a</em></strong>',"FLIR"); ?></td>
 					</tr>
 					</table>
 					<p class="submit"><input type="submit" class="btn" name="save" style="padding:5px 30px 5px 30px;" value="<?php _e('Save FLIR Configuration',"FLIR"); ?>" /></p>
