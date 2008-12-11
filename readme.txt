@@ -4,7 +4,7 @@ Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.5
 Tested up to: 2.7
-Stable tag: 0.8.0
+Stable tag: 0.8.5
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -100,6 +100,16 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 * Rendering in Konqueror is incorrect and displays all rendered text as the default size and black.
 
 == Changelog ==
+
+= 0.8.5 =
+
+* Set the tags used by the Automatic method to follow the element types as defined in the configuration
+* Add checkbox to allow the use of external JavaScript libraries - jQuery, Scriptaculous and Prototype support only
+* Hide Elements to Replace section when using Automatic method as Elements to Replace is not used in that case.
+* Add checkbox to disable FLIR for IE6 or lower users to avoid rendering issues that sometimes occur.
+* Fix the global Use FancyFonts not showing it’s activated.
+* Other minor interface fixes for WordPress 2.7
+* Changed internal selection methods to increase speed and reduce memory usage.
 
 = 0.8.0 =
 

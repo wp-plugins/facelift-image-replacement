@@ -1,13 +1,9 @@
-			<div id="poststuff" class="flir">
-      	<div class="postbox close-me">
-      	<h3><?php _e('Elements to Replace', "FLIR");?>: </h3>
-      	<div class="inside">
-					<form action="?page=FLIR" method="post" id="flir_elements" name="flir_elements">
 <?php 
 if (!empty($this->adminConfig)) {
-  $flirConfig  = $this->getAdminOptions($this->adminConfigName);
-  $fontsList   = $flirConfig['fonts_list'];
-  $elementList = $flirConfig['element_types'];
+  $flirConfig           = $this->getAdminOptions($this->adminConfigName);
+  $fontsList            = $flirConfig['fonts_list'];
+  $elementList          = $flirConfig['element_types'];
+  $javascriptMethod     = $flirConfig['javascript_method'];
 }
 
 if (!empty($this->adminOptions)) {
@@ -18,9 +14,15 @@ if (!empty($this->adminOptions)) {
 	$elementFancyFonts    = $flirOptions['fancyfonts'];
 	$elementQuickEffect   = $flirOptions['quickeffect'];
   $defaultMode          = $flirOptions['defaultmode'];
-  $defaultFancyFonts    = $flirOptions['fancyfont'];
+  $defaultFancyFonts    = $flirOptions['defaultfancyfonts'];
 }
 ?>
+			<div id="poststuff" class="metabox-holder flir" <?php if (strtolower($javascriptMethod) == 'automatic') {echo '"style=display:none;"';}?>>
+      	<div class="postbox close-me">
+      	<h3><?php _e('Elements to Replace', "FLIR");?>: </h3>
+      	<div class="inside">
+					<form action="?page=FLIR" method="post" id="flir_elements" name="flir_elements">
+
 						<table class="widefat">
             	<thead>
             		<tr valign="top">
@@ -38,7 +40,7 @@ foreach ($elementList as $key => $value) {
   $element_value = $value?>
             <tr>
                <td><code>&lt;<?php echo $element_value;?>&gt;</code></td>
-							 <td><input type="checkbox" name="flir_elements[]" value="<?php echo $element_value;?>"<?php if(!empty($elementsForFlir)) {foreach ($elementsForFlir as $key => $value) {if ($element_value == $value) echo ' checked="checked"';}}?></td>
+							 <td><input type="checkbox" name="flir_elements[]" value="<?php echo $element_value;?>"<?php if(!empty($elementsForFlir)) {foreach ($elementsForFlir as $key => $value) {if ($element_value == $value) echo ' checked="checked"';}}?> /></td>
 							 <td>
 							 	<select name="flir_element_fonts[]">
 								 	<option value="">N/A</option><?php if (!empty($fontsList)) {
@@ -63,7 +65,7 @@ foreach ($elementList as $key => $value) {
   }?>
                   </select>
                </td>
-               <td><input type="checkbox" name="flir_elements_fancyfonts[]" value="<?php echo $element_value;?>"<?php if(!empty($elementFancyFonts)) {foreach ($elementFancyFonts as $key => $value) {if ($element_value == $value) echo ' checked="checked"';}}?></td>
+               <td><input type="checkbox" name="flir_elements_fancyfonts[]" value="<?php echo $element_value;?>"<?php if(!empty($elementFancyFonts)) {foreach ($elementFancyFonts as $key => $value) {if ($element_value == $value) echo ' checked="checked"';}}?> /></td>
                <td>Forthcoming</td>
             </tr>
 <?php
@@ -93,7 +95,7 @@ foreach ($elementList as $key => $value) {
                     <?php _e('<p><small>This selects the default rendering mode for FLIR to use when no other rendering mode is specified in the Elements to Replace section or you are using the Automatic Method as specified in the FLIR Configuraton section.</small></p>', "FLIR");?>
                   </td>
                   <td width="50%">
-                    <input type="checkbox" name="flir_fancy_font" value="small"<?php if ($defaultFancyFonts) 
+                    <input type="checkbox" name="flir_default_fancyfonts" value="small"<?php if ($defaultFancyFonts) 
   echo ' checked="checked"';?> /><?php _e('<p><small>Some fonts do not get drawn properly by the integrated Facelift image generator. This is due to a feature of PHP\'s GD. These fonts typically include characters with long tails that extend beyond their boundaries.  FanyFonts Uses <a href="http://www.imagemagick.org/script/index.php" title="ImageMagick" target="_blank">ImageMagick</a> to render images as an alternative to the GD Library. ImageMagick is required for FancyFonts and QuickEffects plugins. You must have ImageMagick installed and the correct path set in the FLIR Configuration section for ImageMagick to work with FLIR.</small></p>', "FLIR");?>
                   </td>
                 </tr>
