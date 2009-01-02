@@ -135,9 +135,9 @@
 					  	<input type="checkbox" name="drop_ie" value="1"<?php if($dropIE == 1) {echo ' checked="checked"';}?> />
 					  <br /><?php _e('Check this to disable for IE 6<br /><strong><em>Default: unchecked</em></strong>',"FLIR"); ?></td>
 					</tr>
-					<tr valign="top"><th scope="row"><strong><?php _e('Element Types',"FLIR"); ?>: </strong></th><td valign="top">
+					<tr valign="top"><th scope="row"><strong><?php _e('Element Types to Replace',"FLIR"); ?>: </strong></th><td valign="top">
 					  	<input name="element_types" type="text" value="<?php if (empty($elementList)) { echo 'h1,h2,h3,h4,h5'; } else {echo implode(",", $elementList);}?>" size="32" maxlength="254" />
-					  <br /><?php _e('This list the elements to replace. If using Automatic the default font will be used for all elements.  If using jQuery, Scriptaculous or Prototype you can specify specific fonts and modes in the Elements to Replace section, which will only appear if using a JavaScript method other than Automatic. You can also specify more granular elements to replace such as <code>div#sidebar a</code> to replace the links in your sidebar.<em>Remove elements you do not intend to replace.</em><br /><strong><em>Example: h1,h2,h3,h4,h5,h6,small,blockquote,div#postinfo,p.date,div#sidebar a</em></strong>',"FLIR"); ?></td>
+					  <br /><?php _e('This list the elements to replace. If using Automatic the default font will be used for all elements.  If using jQuery, Scriptaculous or Prototype you can specify specific fonts and modes in the <strong>Elements to Replace</strong> section, which will only appear if using a JavaScript method other than Automatic. You can also specify more granular elements to replace such as <code>div#sidebar a</code> to replace the links in your sidebar.<em>Remove elements you do not intend to replace.</em><br /><strong><em>Example: h1,h2,h3,h4,h5,h6,small,blockquote,div#postinfo,p.date,div#sidebar a</em></strong>',"FLIR"); ?></td>
 					</tr>
 					</table>
 					<p class="submit"><input type="submit" class="btn" name="save" style="padding:5px 30px 5px 30px;" value="<?php _e('Save FLIR Configuration',"FLIR"); ?>" /></p>

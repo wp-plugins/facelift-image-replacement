@@ -4,7 +4,7 @@ Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.6
 Tested up to: 2.7
-Stable tag: 0.8.5
+Stable tag: 0.8.6
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -96,10 +96,16 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 
 == Known Issues ==
 
+* Default mode options are in the wrong location and needs to be moves.  Should be in version 0.8.7 (Thanks Zack for reminding me of this)
 * Automatically updating the plugin may not work.  This is most likely caused by the cache folder files being owned by www-data rather than the account holder for the web site.  On deactivation the plugin now clears the cache folder and hopefully eliminates this issues.
 * Rendering in Konqueror is incorrect and displays all rendered text as the default size and black.
 
 == Changelog ==
+
+= 0.8.6 =
+
+* Fixed bug in disable for IE 6 that was also disabling for IE 7 (Thanks Zack for pointing out my stupid error)
+* Change some tect in the admin panel to clarify a few items.
 
 = 0.8.5 =
 

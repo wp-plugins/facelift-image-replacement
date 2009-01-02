@@ -21,6 +21,7 @@ if (!empty($this->adminOptions)) {
       	<div class="postbox close-me">
       	<h3><?php _e('Elements to Replace', "FLIR");?>: </h3>
       	<div class="inside">
+      	<h4><?php _e('Only used with jQuery, Scriptaculous and Prototype', "FLIR");?>: </h4>
 					<form action="?page=FLIR" method="post" id="flir_elements" name="flir_elements">
 
 						<table class="widefat">
