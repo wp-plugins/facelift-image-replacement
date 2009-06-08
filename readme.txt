@@ -3,8 +3,8 @@ Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift
 Requires at least: 2.6
-Tested up to: 2.7
-Stable tag: 0.8.7
+Tested up to: 2.8
+Stable tag: 0.8.7.1
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -102,10 +102,19 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 
 == Changelog ==
 
+= 0.8.7.1 =
+
+* Minor adjustments to work with WordPress 2.8.
+* Minor changes to jQuery method to ensure compatibility with jQuery 1.3.2. 
+
+= 0.8.7 =
+
+* Fixed typ0 in JavaScript which create issue with IE7.
+
 = 0.8.6 =
 
 * Fixed bug in disable for IE 6 that was also disabling for IE 7 (Thanks Zack for pointing out my stupid error)
-* Change some tect in the admin panel to clarify a few items.
+* Change some text in the admin panel to clarify a few items.
 
 = 0.8.5 =
 

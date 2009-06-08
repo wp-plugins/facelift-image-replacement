@@ -99,7 +99,7 @@
 					    <option value="scriptaculous"<?php if ($javascriptMethod=='scriptaculous') echo ' selected="selected"'?>>Scriptaculous</option>
 					  </select>
 					  <input type="checkbox" name="external_javascript" value="1"<?php if($externalJavaScript == 1) {echo ' checked="checked"';}?> /> Use external JavaScript library. 
-						<br /><?php _e('Choose <em>Automatic</em> or one of three JavaScript libraries to assist in the rendering.  <em>jQuery</em> seems to be the fastest but you may already be loading the <em>prototype</em> or <em>scriptaculous</em> librares and prefer one of those to minimize overhead.  <em>Automatic</em> does not use any JavaScript library but will automatically replace all the elements specified in Element Types below using the default font.<br /><strong><em>Default: Automatic</em></strong>',"FLIR"); ?></td>
+						<br /><?php _e('Choose <em>Automatic</em> or one of three JavaScript libraries to assist in the rendering.  <em>jQuery</em> seems to be the fastest but you may already be loading the <em>prototype</em> or <em>scriptaculous</em> librares and prefer one of those to minimize overhead.  <em>Automatic</em> does not use any JavaScript library but will automatically replace all the elements specified in Element Types below using the default font.<br /><strong style="color:#900"><em>Note: if you wish to specify which elements to replace or use FancyFonts you must use a method other than Automatic.</em></strong><br /><strong><em>Default: Automatic</em></strong>',"FLIR"); ?></td>
 					</tr>
 					<?php
 		$baseFontsList   = array();
