@@ -1,7 +1,7 @@
 === Facelift Image Replacment (FLIR) ===
 Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
-Tags: flir, titles, posts, images, themes, facelift
+Tags: flir, titles, posts, images, themes, facelift, text, headings
 Requires at least: 2.6
 Tested up to: 2.8
 Stable tag: 0.8.7.1
