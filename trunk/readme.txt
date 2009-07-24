@@ -53,53 +53,6 @@ If GD is not installed on your server you will have to recompile PHP to include 
 1. Before Facelift Image Replacement
 2. After Facelift Image Replacement
 
-== Frequently Asked Questions ==
-
-= It doesn't work, how can I make it work? =
-
-* Please ensure that you have a cache directory at `wp-content/plugins/facelift-image-replacement/facelift/cache` and that it is writable. (`chmod a+w /cache`)
-* Please ensure that your config-flir.php file exists at `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` and that it is writable. (`chmod a+w config-flir.php`)
-* Make sure the `wp-content/plugins/facelift-image-replacement/facelift/` is readable
-* Check your theme's `footer.php` file and make sure it has the `wp_footer();` function in it.  It should be located just above the `</body>` element close tag.
-* Check your theme's `header.php` file and make sure it has the `wp_head();` function in it.  It should be located just above the `</head>` element close tag.
-* Check the FLIR admin panel under the design menu and make certain all the options are set in the FLIR Configuration section.  Read the help text on the right of each option for information.
-* Check the FLIR admin panel under the design menu and make certain all the options you want are set in the Elements to Replace section.  Heading 1 is generally used for the blog heading, Heading 2 is used for the posts on the main page and on individual post pages, Heading 3 is often used with posts on the catagories and tags pages.  Small is often used for the date and author of the post.
-
-= Is FLIR be configurable from the admin panel? =
-
-FLIR is almost completely configurable from the admin panel.  Eventually it is planned to be able to configure FLIR almost completely from the admin panel.  At present to configure how and what fonts are used with flir and certain element to be replaced by FLIR.
-
-= Will the FLIR plugins be usable? =
-
-At present the FancyFonts plugin is implemented.  QuickEffects will be implemented next.  They require ImageMagick 6.3.7 or higher to function correctly and will be configurable from the admin panel.
-
-= What about the fonts that come with FLIR? =
-
-All the fonts that come with FLIR are either free or Open Source.
-
-= What advantages would you say FLIR provides over sIFR? Besides, of course, from needing flash? =
-
-* Facelift creates transparent PNGs which can lie over the top of any background you want.   For example, take a look at <a href="http://facelift.mawhorter.net/examples/">Example #5</a>. 
-* It can easily create multi colored/font headers.  (<a href="http://facelift.mawhorter.net/examples/">Example #3</a>)
-* It can replace links and maintain their clickability (though I believe this functionality was added to sIFR).
-* It is very easy to implement.  No other tools besides a web browser are needed and it is very easy to maintain.
-* It plays well with third party libraries such as jQuery and prototype.
-* You can take advantage of plugins such as the QuickEffects plugin and add things like drop shadows and pattern/gradient fills if you have ImageMagick installed on your server.
-
-= Is there some kind of caching system? If so, how does it work? =
-
-Facelift caches all images it generates to disk.  It then will send appropriate headers to the browser if the image has not changed.  This allows for drastic speed increases in rendering when browsing a website.  After a couple of page views you sometimes won't even notice the text get replaced.  By default, the cached images are saved indefinitely, but you can change facelift to run through the cache every so often and remove old images to save disk space.  Just change the settings in the admin panel.
-
-= It still doesn't work / I have other questions =
-
-* the best places to get answers are <a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/">Facelift Image Replacement (FLIR) for WordPress @ 23Systems </a> and or <a hreg="http://forums.mawhorter.net/viewforum.php?id=11">FLIR Integration with WordPress</a>.
-
-== Known Issues ==
-
-* Default mode options are in the wrong location and needs to be moves.  Should be in version 0.8.7 (Thanks Zack for reminding me of this)
-* Automatically updating the plugin may not work.  This is most likely caused by the cache folder files being owned by www-data rather than the account holder for the web site.  On deactivation the plugin now clears the cache folder and hopefully eliminates this issues.
-* Rendering in Konqueror is incorrect and displays all rendered text as the default size and black.
-
 == Changelog ==
 
 = 0.8.7.1 =
@@ -107,7 +60,7 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 * Minor adjustments to work with WordPress 2.8.
 * Minor changes to jQuery method to ensure compatibility with jQuery 1.3.2. 
 
-= 0.8.7 =
+= 0.8.7 =Fac
 
 * Fixed typ0 in JavaScript which create issue with IE7.
 
@@ -208,6 +161,55 @@ Facelift caches all images it generates to disk.  It then will send appropriate 
 * Initial Release
 * Auto rendering of `<h1>` to `<h5>` only
 * Using Facelift 1.1
+
+== Frequently Asked Questions ==
+
+= It doesn't work, how can I make it work? =
+
+* Please ensure that you have a cache directory at `wp-content/plugins/facelift-image-replacement/facelift/cache` and that it is writable. (`chmod a+w /cache`)
+* Please ensure that your config-flir.php file exists at `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` and that it is writable. (`chmod a+w config-flir.php`)
+* Make sure the `wp-content/plugins/facelift-image-replacement/facelift/` is readable
+* Check your theme's `footer.php` file and make sure it has the `wp_footer();` function in it.  It should be located just above the `</body>` element close tag.
+* Check your theme's `header.php` file and make sure it has the `wp_head();` function in it.  It should be located just above the `</head>` element close tag.
+* Check the FLIR admin panel under the design menu and make certain all the options are set in the FLIR Configuration section.  Read the help text on the right of each option for information.
+* Check the FLIR admin panel under the design menu and make certain all the options you want are set in the Elements to Replace section.  Heading 1 is generally used for the blog heading, Heading 2 is used for the posts on the main page and on individual post pages, Heading 3 is often used with posts on the catagories and tags pages.  Small is often used for the date and author of the post.
+
+= Is FLIR be configurable from the admin panel? =
+
+FLIR is almost completely configurable from the admin panel.  Eventually it is planned to be able to configure FLIR almost completely from the admin panel.  At present to configure how and what fonts are used with flir and certain element to be replaced by FLIR.
+
+= Will the FLIR plugins be usable? =
+
+At present the FancyFonts plugin is implemented.  QuickEffects will be implemented next.  They require ImageMagick 6.3.7 or higher to function correctly and will be configurable from the admin panel.
+
+= What about the fonts that come with FLIR? =
+
+All the fonts that come with FLIR are either free or Open Source.
+
+= What advantages would you say FLIR provides over sIFR? Besides, of course, from needing flash? =
+
+* Facelift creates transparent PNGs which can lie over the top of any background you want.   For example, take a look at <a href="http://facelift.mawhorter.net/examples/">Example #5</a>. 
+* It can easily create multi colored/font headers.  (<a href="http://facelift.mawhorter.net/examples/">Example #3</a>)
+* It can replace links and maintain their clickability (though I believe this functionality was added to sIFR).
+* It is very easy to implement.  No other tools besides a web browser are needed and it is very easy to maintain.
+* It plays well with third party libraries such as jQuery and prototype.
+* You can take advantage of plugins such as the QuickEffects plugin and add things like drop shadows and pattern/gradient fills if you have ImageMagick installed on your server.
+
+= Is there some kind of caching system? If so, how does it work? =
+
+Facelift caches all images it generates to disk.  It then will send appropriate headers to the browser if the image has not changed.  This allows for drastic speed increases in rendering when browsing a website.  After a couple of page views you sometimes won't even notice the text get replaced.  By default, the cached images are saved indefinitely, but you can change facelift to run through the cache every so often and remove old images to save disk space.  Just change the settings in the admin panel.
+
+You can further improve the speed of both FLIR and WordPress in general by using a PHP accelerator which is an extension designed to boost the performance of software applications written using the PHP programming language. An example of such and accelerator is <a title="Alternative PHP Cache" href="http://pecl.php.net/package/APC">Alternative PHP Cache</a> (APC).  For information on installing see <a href="http://www.23systems.net/2009/07/24/installing-alterative-php-cache-apc-with-plesk-on-ubuntu/">http://www.23systems.net/2009/07/24/installing-alterative-php-cache-apc-with-plesk-on-ubuntu/</a>
+
+= It still doesn't work / I have other questions =
+
+* The best places to get answers are <a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/">Facelift Image Replacement (FLIR) for WordPress @ 23Systems </a> and or <a href="http://forums.mawhorter.net/viewforum.php?id=11" title="FLIR Integration with WordPress">FLIR Integration with WordPress</a>.
+
+== Known Issues ==
+
+* Default mode options are in the wrong location and needs to be moves.  Should be in version 0.8.7 (Thanks Zack for reminding me of this)
+* Automatically updating the plugin may not work.  This is most likely caused by the cache folder files being owned by www-data rather than the account holder for the web site.  On deactivation the plugin now clears the cache folder and hopefully eliminates this issues.
+* Rendering in Konqueror is incorrect and displays all rendered text as the default size and black.
 
 == Upcoming Features ==
 
