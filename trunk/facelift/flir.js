@@ -22,7 +22,7 @@ along with Facelift Image Replacement.  If not, see <http://www.gnu.org/licenses
 */
 
 var FLIR = {
-     version: '1.2'
+     version: '1.2.2'
     
     ,options: {
          path: ''

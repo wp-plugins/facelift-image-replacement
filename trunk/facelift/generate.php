@@ -25,7 +25,7 @@ along with Facelift Image Replacement.  If not, see <http://www.gnu.org/licenses
 define('DEBUG', false);
 define('ENABLE_FONTSIZE_BUG', false);
 
-define('FLIR_VERSION', '1.2');
+define('FLIR_VERSION', '1.2.2');
 define('IS_WINDOWS', (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN'));
 
 require('config-flir.php');
@@ -56,7 +56,7 @@ $FLIR = array();
 $FStyle = preg_match('#^\{("[\w]+":"[^"]*",?)*\}$#i', $_GET['fstyle'])?json_decode($_GET['fstyle'], true):array();
 
 $FLIR['mode']        = isset($FStyle['mode']) ? $FStyle['mode'] : '';
-$FLIR['output']        = isset($FStyle['output']) ? ($FStyle['output']=='jpeg'?'jpg':$FStyle['output']) : 'auto';
+$FLIR['output']        = isset($FStyle['output']) ? ($FStyle['output']=='gif'?'gif':'png') : 'auto';
 
 $FLIR['bkg_transparent'] = is_transparent($FStyle['cBackground']);
 

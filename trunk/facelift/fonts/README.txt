@@ -1,4 +1,4 @@
-All fonts included with facelift were retrieved from http://openfontlibrary.org/.
+All fonts included with Facelift were retrieved from http://openfontlibrary.org/.
 
 Things you should know about the included fonts:
 
