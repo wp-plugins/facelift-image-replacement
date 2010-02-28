@@ -3,8 +3,8 @@ Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift, text, headings
 Requires at least: 2.6
-Tested up to: 2.8.5
-Stable tag: 0.8.8
+Tested up to: 2.9.2
+Stable tag: 0.8.9
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -19,6 +19,8 @@ Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement s
 You can see examples of what it does here: <a href="http://facelift.mawhorter.net/examples/">http://facelift.mawhorter.net/examples/</a>
 
 = IMPORTANT: If using a version prior to 0.7.0 please <em>delete</em> your existing version before installing this version =
+
+= IMPORTANT: If upgrading from a version older than 0.8.9 you must have the `wp_footer()` call in your template for FLIR to work - see `/wp-content/theme/default/footer.php` for example. =
 
 Before running autoupdate please empty your `facelift/cache` folder.
 
@@ -54,6 +56,18 @@ If GD is not installed on your server you will have to recompile PHP to include 
 2. After Facelift Image Replacement
 
 == Changelog ==
+
+= 0.8.9 =
+
+* Moved JavaScript calls to the footer to improve load times.
+ * You must have the `wp_footer()` call in your template for FLIR to work - see `/wp-content/theme/default/footer.php` for example. 
+* Updated Facelift to version 2.0b3.
+ * Various improvments to rendering and speed
+ * Using minified version of FLIR for improved load times 
+ * Additional features (not all are implement with FLIR for WordPress)
+ * Bug fixes from previous versions   
+* Added one additional setting - Single Cache Directory option
+* Updated admin panel to hide help text and provide icon to toggle  
 
 = 0.8.8 =
 
@@ -218,7 +232,7 @@ You can further improve the speed of both FLIR and WordPress in general by using
 
 == Upcoming Features ==
 
-* Quick Effects (requires ImageMagick) ~v0.9
+* Quick Effects (requires ImageMagick) ~v0.9.5
 * More...
 
 == Under consideration ==

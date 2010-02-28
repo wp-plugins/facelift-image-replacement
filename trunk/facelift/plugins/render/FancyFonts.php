@@ -2,7 +2,7 @@
 // JavaScript Document
 
 /*
-FancyFonts v0.3.2
+FancyFonts v0.4.0
 
 Facelift was written and is maintained by Cory Mawhorter.  
 It is available from http://facelift.mawhorter.net/
@@ -39,7 +39,7 @@ if($FLIR['text'][0] == '@') $FLIR['text'] = '\\'.$FLIR['text'];
 $bounds = bounding_box($FLIR['text']);// convertBoundingBox(imagettfbbox($FLIR['size_pts'], 0, $FLIR['font'], $FLIR['text']));
 
 $fulltrim = '';
-if($FStyle['realFontHeight']!='true') {
+if($FStyle['fixBaseline']!='true') {
 	$bounds['height'] += 200;
 	$REAL_HEIGHT_BOUNDS = $bounds;	
 	$fulltrim = '-trim +repage';
@@ -92,7 +92,7 @@ if($FStyle['ff_BlurEdges']=='true') {
 }
 
 
-if($FStyle['ff_Wrap']!='true' && $FStyle['realFontHeight']=='true') { // trim sides
+if($FStyle['ff_Wrap']!='true' && $FStyle['fixBaseline']=='true') { // trim sides
 	$info = shell_exec(CONVERT.' '.escapeshellarg(FULL_CACHE_PATH).' -trim info:');
 	if(preg_match('#(PNG|GIF|JPEG) ([0-9]+)x([0-9]+) ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)#', $info, $m))
 		exec(CONVERT.' '.escapeshellarg(FULL_CACHE_PATH)

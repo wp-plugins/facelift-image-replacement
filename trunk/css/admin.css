@@ -50,3 +50,19 @@ a.togbox:hover {
 	background:#fff;
 	color:#999;
 }
+.flir-info {
+  cursor:pointer;
+  top: 0;
+}
+.flir-tip {
+  max-width:500px;
+  text-align:left;
+  display:none;
+}
+input {
+  max-width:500px;
+}
+.flir-elements {
+  max-width:500px;
+  text-align:left;
+}

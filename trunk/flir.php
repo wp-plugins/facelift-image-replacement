@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.8.8
+Version: 0.8.9
 Author URI: http://www.23systems.net/
 */
 global $g_flir_url, $g_facelift_url;
@@ -74,7 +74,7 @@ if (!class_exists('wp_flir')) {
     function __construct() {
   	
       add_action("admin_menu", array(&$this, "addAdminPages"));
-      add_action("admin_head", array(&$this, "addAdminCss"));
+      add_action("admin_head", array(&$this, "addAdminHeader"));
 //      add_action("wp_head", array(&$this, "add_css"));
       $this->adminOptions = $this->getAdminOptions($this->adminOptionsName);
       $this->adminConfig = $this->getAdminOptions($this->adminConfigName);
@@ -98,6 +98,7 @@ if (!class_exists('wp_flir')) {
           $unknownFontSize        = $flirConfig['unknown_font_size'];
           $cacheCleanupFrequency  = $flirConfig['cache_cleanup_frequency'];
           $cacheKeepTime          = $flirConfig['cache_keep_time'];
+          $cacheSingleDir         = $flirConfig['cache_single_dir'];
           $cacheDir			          = 'cache';
           $fontDir                = 'fonts';
           $pluginDir 		          = 'plugins';
@@ -132,10 +133,11 @@ if (!class_exists('wp_flir')) {
   	      $unknownFontSize        = '16';
   	      $cacheCleanupFrequency  = '-1';
   	      $cacheKeepTime          = '604800';
+  	      $cacheSingleDir         = 'false';
           $cacheDir			          = 'cache';
           $fontDir                = 'fonts';
           $pluginDir 		          = 'plugins';
-  	      $horizontalTextBounds   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  	      $horizontalTextBounds   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]{}()_';
   	      $javascriptMethod       = 'automatic';
   	      $externalJavaScript     = '0';
   	      $fontsList              = $baseFontsList;
@@ -147,6 +149,7 @@ if (!class_exists('wp_flir')) {
   	        "unknown_font_size"       => $unknownFontSize,
   	        "cache_cleanup_frequency" => $cacheCleanupFrequency,
   	        "cache_keep_time"         => $cacheKeepTime,
+            "cache_single_dir"				=> $cacheSingleDir,
             "cache_dir"								=> $cacheDir,
             "font_dir"								=> $fontDir,
             "plugin_dir"							=> $pluginDir,
@@ -220,6 +223,7 @@ if (!class_exists('wp_flir')) {
           $unknownFontSize        = $_POST[unknown_font_size];
           $cacheCleanupFrequency  = $_POST[cache_cleanup_frequency];
           $cacheKeepTime          = $_POST[cache_keep_time];
+          $cacheSingleDir         = $this->setItemSelected($_POST[cache_single_dir]);
           $cacheDir			          = 'cache';
           $fontDir                = 'fonts';
           $pluginDir 		          = 'plugins';
@@ -239,6 +243,7 @@ if (!class_exists('wp_flir')) {
             "unknown_font_size"       => $unknownFontSize,
             "cache_cleanup_frequency" => $cacheCleanupFrequency,
             "cache_keep_time"         => $cacheKeepTime,
+            "cache_single_dir"				=> $cacheSingleDir,
             "cache_dir"								=> $cacheDir,
             "font_dir"								=> $fontDir,
             "plugin_dir"							=> $pluginDir,
@@ -303,7 +308,7 @@ if (!class_exists('wp_flir')) {
       }
       ?>
 		<div class="wrap">
-			<h2><?php _e('FLIR for WordPress Configuration v0.8.5 (Facelift v1.2)', 'FLIR');?></h2>
+			<h2><?php _e('FLIR for WordPress Configuration v0.8.9 (Facelift v2.0b3)', 'FLIR');?></h2>
 			<br style="clear:both;" />
 <?php
 			require('admin/flir-config.php');
@@ -315,14 +320,22 @@ if (!class_exists('wp_flir')) {
 			require('admin/flir-el.php');
 			require('admin/flir-settings.php');
   ?>
-        <script type="text/javascript">
-		<!--
-		jQuery('.postbox h3').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); } );
-		jQuery('.postbox.close-me').each(function(){
-		jQuery(this).addClass("closed");
-		});
-		//-->
-	</script>
+      <script type="text/javascript">
+  		<!--
+  		jQuery('.postbox h3').click( function() { jQuery(jQuery(this).parent().get(0)).toggleClass('closed'); } );
+  		jQuery('.postbox.close-me').each(function(){
+  		jQuery(this).addClass("closed");
+  		});
+		
+      function toggleVisibility(id) {
+      var elmt = document.getElementById(id);
+        if(elmt.style.display == 'block')
+          elmt.style.display = 'none';
+      else
+        elmt.style.display = 'block';
+      }
+		  //-->
+    	</script>      
 			<?php
     }
 
@@ -336,30 +349,30 @@ if (!class_exists('wp_flir')) {
 				switch ($g_flir_method) {
           case 'jquery':
             if (!($this->external_js())) {
-          		wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("jquery"), 0.1);
+          		wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("jquery"), '1.2.2', true);
           	}
           	else {
-            	wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
             }
             break;
           case 'scriptaculous':
         	  if (!($this->external_js())) {
-        		  wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("scriptaculous"), 0.1);
+        		  wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("scriptaculous"), '1.2.2', true);
         		}
         		else {
-            	wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
             }
             break;
           case 'prototype':
         	  if (!($this->external_js())) {
-        		  wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', array("prototype"), 0.1);
+        		  wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("prototype"), '1.2.2', true);
         		}
         		else {
-            	wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
             }
             break;
           default:
-            wp_enqueue_script('flir_script', $g_facelift_url.'flir.js', 0.1);
+            wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
         }
     }
 
@@ -387,13 +400,13 @@ if (!class_exists('wp_flir')) {
   					echo '<script type="text/javascript">'.$this->eol();
   					echo "FLIR.init({path:'$g_facelift_url'},new FLIRStyle({mode:'".$defaultMode."'".$setDefaultFancyFonts."}));".$this->eol();
   					if (!empty($elementsForFlir)) {
-  						echo 'jQuery(function($){'.$this->eol();
-  						echo '    $(document).ready(function(){'.$this->eol();
+  						echo 'jQuery(document).ready(function($){'.$this->eol();
+//  						echo '    $(document).ready(function(){'.$this->eol();
   							foreach ($elementsForFlir as $key => $value) {
   							  if ($elementFancyFonts[$key] == $value) { $fancyFonts = ", mode:'fancyfonts'"; } else { $fancyFonts = ""; }
   								echo '    $("'.$value.'").each( function() { FLIR.replace(this, new FLIRStyle({mode:\''.$elementMode[$key].'\',cFont:\''.$elementFonts[$key].'\''.$fancyFonts.'}));});'.$this->eol();
   							}
-  						echo '    });'.$this->eol();
+//  						echo '    });'.$this->eol();
   						echo '});'.$this->eol();
   					}
   					else {
@@ -441,7 +454,7 @@ if (!class_exists('wp_flir')) {
       echo '<link rel="stylesheet" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/style.css" type="text/css" media="screen" />'.$this->eol();
     }
 
-    function addAdminCss() {
+    function addAdminHeader() {
       echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/facelift-image-replacement/css/admin.css" />'.$this->eol();
     }
 
@@ -476,6 +489,17 @@ if (!class_exists('wp_flir')) {
 			   if ($value == $theItem) { $returnValue = true; }
 		    }
 	    }
+	   return $returnValue;
+    }
+
+    /*---- sets selected array items in multi select form field to selected ----*/
+    function setItemSelected($theItem) {
+	    if (!empty($theItem)) {
+        $returnValue = 'true';
+		  }
+		  else {
+        $returnValue = 'false';
+      }
 	   return $returnValue;
     }
     
