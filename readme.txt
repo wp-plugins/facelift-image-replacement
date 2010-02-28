@@ -18,9 +18,11 @@ Facelift Image Replacement (or FLIR, pronounced fleer) is an image replacement s
 
 You can see examples of what it does here: <a href="http://facelift.mawhorter.net/examples/">http://facelift.mawhorter.net/examples/</a>
 
-= IMPORTANT: If using a version prior to 0.7.0 please <em>delete</em> your existing version before installing this version =
+= IMPORTANT NOTES: =
 
-= IMPORTANT: If upgrading from a version older than 0.8.9 you must have the `wp_footer()` call in your template for FLIR to work - see `/wp-content/theme/default/footer.php` for example. =
+If using a version prior to 0.7.0 please <em>delete</em> your existing version before installing this version =
+
+If upgrading from a version older than 0.8.9 you must have the `wp_footer()` call in your template for FLIR to work - see `/wp-content/theme/default/footer.php` for example.
 
 Before running autoupdate please empty your `facelift/cache` folder.
 
@@ -39,9 +41,10 @@ If GD is not installed on your server you will have to recompile PHP to include 
 3. Set the `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` to be writable
 3. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable
 4. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
-5. Activate plugin in WordPress admin panel
-5. Set FLIR configuration in the admin panel - `config-flir.php` must be writable for changes to take effect.
-7. Customize tags for FLIR on FLIR submenu under the Design menu
+5  Make sure you have the `wp_footer()` call in the footer of your template See `/wp-content/theme/default/footer.php` for example.
+6. Activate plugin in WordPress admin panel
+7. Set FLIR configuration in the admin panel - `config-flir.php` must be writable for changes to take effect.
+8. Customize tags for FLIR on FLIR submenu under the Design menu
 
 = Notes =
 
@@ -222,11 +225,11 @@ You can further improve the speed of both FLIR and WordPress in general by using
 
 = It still doesn't work / I have other questions =
 
-* The best places to get answers are <a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/">Facelift Image Replacement (FLIR) for WordPress @ 23Systems </a> and or <a href="http://forums.mawhorter.net/viewforum.php?id=11" title="FLIR Integration with WordPress">FLIR Integration with WordPress</a>.
+* The best places to get answers are <a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/">Facelift Image Replacement (FLIR) for WordPress @ 23Systems </a> and/or <a href="http://forums.mawhorter.net/viewforum.php?id=11" title="FLIR Integration with WordPress">FLIR Integration with WordPress</a>.
 
 == Known Issues ==
 
-* Default mode options are in the wrong location and needs to be moves.  Should be in version 0.8.7 (Thanks Zack for reminding me of this)
+* Default mode options are in the wrong location and needs to be moved.  Should be in version 0.8.7 (Thanks Zack for reminding me of this)
 * Automatically updating the plugin may not work.  This is most likely caused by the cache folder files being owned by www-data rather than the account holder for the web site.  On deactivation the plugin now clears the cache folder and hopefully eliminates this issues.
 * Rendering in Konqueror is incorrect and displays all rendered text as the default size and black.
 
@@ -242,5 +245,4 @@ You can further improve the speed of both FLIR and WordPress in general by using
 == Development Version ==
 
 * Always the latest code
-* May be buggy - actually probably is
 * Please remove existing version before installing the development version
