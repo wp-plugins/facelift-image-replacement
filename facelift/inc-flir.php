@@ -1,6 +1,6 @@
 <?php
 /*
-Facelift Image Replacement v1.2
+Facelift Image Replacement v2.0 beta 3
 Facelift was written and is maintained by Cory Mawhorter.  
 It is available from http://facelift.mawhorter.net/
 
@@ -22,110 +22,140 @@ You should have received a copy of the GNU General Public License
 along with Facelift Image Replacement.  If not, see <http://www.gnu.org/licenses/>.
 */
 if(consttrue('DEBUG')) {
-    header( 'Expires: Wed, 27 Jul 1983 05:00:00 GMT' );
-    header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
-    header( 'Cache-Control: no-store, no-cache, must-revalidate' );
-    header( 'Cache-Control: post-check=0, pre-check=0', false );
-    header( 'Pragma: no-cache' );
+	header('Expires: Wed, 27 Jul 1983 05:00:00 GMT');
+	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+	header('Cache-Control: no-store, no-cache, must-revalidate');
+	header('Cache-Control: post-check=0, pre-check=0', false);
+	header('Pragma: no-cache');
 }
 
+$ERROR_MSGS = array(
+	 'COULD_NOT_CREATE'				=> 'Invalid: Could not create image.'
+	,'COULD_NOT_SETLOCALE'			=> 'Unable to set the current local.  You can disable this check by removing it from inc-flir.php starting around line 37.'
+	,'DISALLOWED_DOMAIN'				=> 'Bad Domain: Domain is not allowed to generate images.'
+	
+	,'PHP_TOO_OLD'						=> 'The version of PHP you are using is too old.  Facelift requires at least PHP v4.3.0.'
+	,'PHP_UNSUPPORTED'				=> 'The version of PHP you are using is not supported.'
+	
+	,'GD_NOT_INSTALLED'				=> 'Facelift requires the GD extension for PHP.'
+	,'GD_TOO_OLD'						=> 'The version of GD you are using is too old.  Facelift requires at least GD v2.'
+	,'GD_NO_IMAGES'					=> 'Facelift needs to be able to create images in PNG or GIF.  You have none of these supported by your version of GD.  Please enable the ability to create PNG or GIF images in your GD installation.'
+	,'GD_NO_FREETYPE'					=> 'The version of GD you are using does not have support for FreeType.  Facelift requires GD with FreeType support to work.'
+	
+	,'FONT_DOESNT_EXIST'				=> 'Cannot find font.  Be sure you have specified a valid default font file.'
+	
+	,'CACHE_DOESNT_EXIST'			=> 'Cache directory does not exist.'
+	,'CACHE_UNABLE_CREATE'			=> 'Unable to create the cache directory.  Verify that permissions are properly set.'
+	
+	,'SAFE_MLD'							=> 'PHP safe_mode is currently turned on.  To use FLIR with safe_mode on, you must change CACHE_SINGLE_DIR to true.  Please read the docs at http://docs.facelift.mawhorter.net'
+);
+
+if(version_compare(PHP_VERSION, '4.3.0', '<'))
+    err('PHP_TOO_OLD');
+if(version_compare(PHP_VERSION, '6.0.0', '>='))
+    err('PHP_UNSUPPORTED');
+    
+//if(false == setlocale(LC_CTYPE, USER_LOCALE.'.UTF-8'))
+//	err('COULD_NOT_SETLOCALE');
+	
 /***
  *
  * Can be deleted if magic quotes is disabled.  Magic quotes, what a plague it is/was.
  *
 */
 if (get_magic_quotes_gpc()) {
-    function stripslashes_deep($value)
-    {
-        $value = is_array($value) ?
-                    array_map('stripslashes_deep', $value) :
-                    stripslashes($value); 
-
-        return $value;
-    }
-
-    $_POST = array_map('stripslashes_deep', $_POST);
-    $_GET = array_map('stripslashes_deep', $_GET);
-    $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-    $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+	function stripslashes_deep($value) {
+		$value = is_array($value) ?
+						array_map('stripslashes_deep', $value) :
+						stripslashes($value); 
+		
+		return $value;
+	}
+	
+	$_POST 		= array_map('stripslashes_deep', $_POST);
+	$_GET 		= array_map('stripslashes_deep', $_GET);
+	$_COOKIE 	= array_map('stripslashes_deep', $_COOKIE);
+	$_REQUEST 	= array_map('stripslashes_deep', $_REQUEST);
 }
-
-$ERROR_MSGS = array(
-     'COULD_NOT_CREATE'             => 'Invalid: Could not create image.'
-    ,'DISALLOWED_DOMAIN'         => 'Bad Domain: Domain is not allowed to generate images.'
-
-    ,'PHP_TOO_OLD'                    => 'The version of PHP you are using is too old.  Facelift requires at least PHP v4.3.0.'
-    ,'PHP_UNSUPPORTED'            => 'The version of PHP you are using is not supported.'
-
-    ,'GD_NOT_INSTALLED'            => 'Facelift requires the GD extension for PHP.'
-    ,'GD_TOO_OLD'                    => 'The version of GD you are using is too old.  Facelift requires at least GD v2.'
-    ,'GD_NO_IMAGES'                => 'Facelift needs to be able to create images in PNG, GIF, or JPG.  You have none of these supported by your version of GD.  Please enable the ability to create PNG, GIF, or JPG images in your GD installation.'
-    ,'GD_NO_FREETYPE'                => 'The version of GD you are using does not have support for FreeType.  Facelift requires GD with FreeType support to work.'
-
-    ,'FONT_DOESNT_EXIST'            => 'Cannot find font.  Be sure you have specified a valid default font file.'
-    ,'FONT_PS_COULDNT_LOAD'        => 'Unable to load the PostScript font.'
-    ,'FONT_PS_UNSUPPORTED'        => 'PostScript fonts are unsupported at this time.  That goes double for Windows servers.<br /><br />If you want, you can comment out "err(\'FONT_PS_UNSUPPORTED\');" and give it a shot.'
-
-    ,'CACHE_DOESNT_EXIST'        => 'Cache directory does not exist.'
-    ,'CACHE_UNABLE_CREATE'        => 'Unable to create the cache directory.  Verify that permissions are properly set.'
-);
-
 
 // functions
 
+
+
+function to_utf8($in, $from=NULL) {
+	@$detected = mb_detect_encoding($in);
+	if(is_null($from) || strtolower($from)!=strtolower($detected)) // if not specified or mb_detect returns something different
+		$from = $detected;
+	if(strtolower($from) == 'utf-8') {
+		return $in;
+	}
+	
+	if($from=='') {
+		return utf8_encode($in); 
+	}
+	
+	return mb_convert_encoding($in, 'UTF-8', $from);
+}
+
 function get_cache_fn($md5, $ext='png') {
-    if(!file_exists(CACHE_DIR))
-        err('CACHE_DOESNT_EXIST');
-        
-    $tier1 = CACHE_DIR.'/'.$md5[0].$md5[1];
-    $tier2 = $tier1.'/'.$md5[2].$md5[3];
-    
-    if(!file_exists($tier1))
-        @mkdir($tier1);
-    if(!file_exists($tier2))
-        @mkdir($tier2);
-        
-    if(!file_exists($tier2))
-        err('CACHE_UNABLE_CREATE');
-        
-    return $tier2.'/'.$md5.'.'.$ext;
+	if(!file_exists(CACHE_DIR))
+		err('CACHE_DOESNT_EXIST');
+	
+	if(CACHE_SINGLE_DIR)
+		return CACHE_DIR.'/'.$md5.'.'.$ext;
+	
+	$tier1 = CACHE_DIR.'/'.$md5[0].$md5[1];
+	$tier2 = $tier1.'/'.$md5[2].$md5[3];
+	
+	if(!file_exists($tier1))
+		@mkdir($tier1);
+	if(!file_exists($tier2))
+		@mkdir($tier2);
+	
+	if(!file_exists($tier2))
+		err('CACHE_UNABLE_CREATE');
+	
+	return $tier2.'/'.$md5.'.'.$ext;
 }
 
 function cleanup_cache() {
-    $d1 = dir(CACHE_DIR);
-    while(false !== ($tier1 = $d1->read())) {
-        if($tier1 == '.' || $tier1 == '..') continue; 
-        
-        $d2 = dir(CACHE_DIR.'/'.$tier1);
-        while(false !== ($tier2 = $d2->read())) {
-            if($tier2 == '.' || $tier2 == '..') continue; 
-            
-            $path = CACHE_DIR.'/'.$tier1.'/'.$tier2;
-            $d3 = dir($path);
-            while(false !== ($entry = $d3->read())) {
-                if($entry == '.' || $entry == '..') continue; 
-                
-                if((time() - filectime($path.'/'.$entry)) > CACHE_KEEP_TIME) {
-//                    echo $path.'/'.$entry.' removed<BR>';
-                    unlink($path.'/'.$entry);
-                }
-            }
-            $d3->close();            
-        }
-        $d2->close();
-    }
-    $d1->close();
+	$d1 = dir(CACHE_DIR);
+	while(false !== ($tier1 = $d1->read())) {
+		if($tier1 == '.' || $tier1 == '..' || is_file(CACHE_DIR.'/'.$tier1)) continue; 
+		
+		$d2 = dir(CACHE_DIR.'/'.$tier1);
+		while(false !== ($tier2 = $d2->read())) {
+			if($tier2 == '.' || $tier2 == '..' || is_file(CACHE_DIR.'/'.$tier1.'/'.$tier2)) continue; 
+			
+			$path = CACHE_DIR.'/'.$tier1.'/'.$tier2;
+			$d3 = dir($path);
+			while(false !== ($entry = $d3->read())) {
+				if($entry == '.' || $entry == '..') continue; 
+			
+				if((time() - filectime($path.'/'.$entry)) > CACHE_KEEP_TIME)
+					unlink($path.'/'.$entry);
+			}
+			$d3->close();            
+		}
+		$d2->close();
+	}
+	$d1->close();
 }
 
 function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_text, $max_width, $align='left', $lineheight=1.0) {
-    global $FLIR;
-    
+    global $FLIR,$FStyle;
+	 
+	 if($lineheight<-1) // will cause text to disappear off canvas
+	 	$lineheight = 1.0;
+
     $raw_textlines = explode("\n", $raw_text);
     
     $formatted_lines = $formatted_widths = array();
     $max_values = bounding_box(HBOUNDS_TEXT);
     $previous_bounds = array('width' => 0);
-    
+	 $longest_line=0;
+
+	// pseudo letter spacing uses extra spaces
     $spaces = ' '.str_repeat(' ', (defined('SPACING_GAP')?SPACING_GAP:0));
         
     foreach($raw_textlines as $text) {        
@@ -141,9 +171,10 @@ function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_tex
 
         if($bounds['width'] < $max_width) { // text doesn't require wrapping
             $formatted_lines[] = $text;
-            $formatted_widths[$text] = $bounds['width'];
+            $formatted_widths[$text] = $longest_line = $bounds['width'];
         }else { // text requires wrapping
             $words = explode($spaces, trim($text));
+				$wordcnt = count($words);
             
             $test_line = '';
             for($i=0; $i < count($words); $i++) { // test words one-by-one to see if they put the width over
@@ -153,6 +184,9 @@ function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_tex
                 $bounds = bounding_box($working_line);
                 
                 if($bounds['width'] > $max_width) { // if working line is too big previous line isn't, use that 
+							if($wordcnt==1) // cannot wrap a single word that is longer than bounding box
+								return false;
+								
                     $formatted_lines[] = $test_line;
                     $formatted_widths[$test_line] = $previous_bounds['width'];
                     $test_line = $words[$i];
@@ -162,6 +196,9 @@ function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_tex
                     $test_line = $working_line;
                 }
                 
+					if($bounds['width'] > $longest_line)
+						$longest_line = $bounds['width'];
+					 
                 $previous_bounds = $bounds;
             }
             
@@ -174,8 +211,15 @@ function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_tex
         }
     }
     
+	 $longest_line += abs($max_leftoffset);
+
     $max_lineheight = ($max_values['height']*$lineheight);
-    $image = imagecreatetruecolor($max_width, (($max_lineheight*(count($formatted_lines)-1))+$max_values['yOffset'])+$max_values['belowBasepoint']);
+	 if($lineheight<0)
+	 	$max_lineheight += $max_values['height'];
+	
+	 $gen_width = $FStyle['notrim']=='true' ? $max_width : $longest_line;
+    $image = imagecreatetruecolor($gen_width
+	 						, (($max_lineheight*(count($formatted_lines)-1))+$max_values['yOffset'])+$max_values['belowBasepoint']);
     
     gd_alpha($image);
     imagefilledrectangle($image, 0, 0, imagesx($image), imagesy($image), gd_bkg($image));    
@@ -192,16 +236,15 @@ function imagettftextbox($size_pts, $angle, $left, $top, $color, $font, $raw_tex
                 $offset_left = 0;
                 break;
             case 'center':
-                $offset_left = ($max_width-$formatted_widths[$formatted_lines[$i]])/2;
+                $offset_left = ($gen_width-$formatted_widths[$formatted_lines[$i]])/2;
                 break;
             case 'right':
-                $offset_left = ($max_width-$formatted_widths[$formatted_lines[$i]])-1;
+                $offset_left = ($gen_width-$formatted_widths[$formatted_lines[$i]]);
                 break;
         }
         
-//        imagettftext($image, $size_pts, $angle, $offset_left, $offset_top, gd_color($image), $font, $formatted_lines[$i]);
+        imagettftext($image, $size_pts, $angle, $offset_left, $offset_top, gd_color($image), $font, $formatted_lines[$i]);
         $bounds = array('xOffset' => $offset_left, 'yOffset' => $offset_top);
-        render_text($bounds, $formatted_lines[$i], $image, $bounds);
     }
 
     return $image;
@@ -361,9 +404,9 @@ function css2hex($css_str, $default_color='000000') {
     $color = isset($css_color[$css_str])?$css_color[$css_str]:$default_color;
     $colors     = explode(',',substr(chunk_split($color, 2, ','), 0, -1));
     $acolor = array();
-    $acolor['red']     = hexdec($colors[0]);
-    $acolor['green']     = hexdec($colors[1]);
-    $acolor['blue']     = hexdec($colors[2]);
+    $acolor['red']		= hexdec($colors[0]);
+    $acolor['green']		= hexdec($colors[1]);
+    $acolor['blue']		= hexdec($colors[2]);
     
     return $acolor;
 }
@@ -377,54 +420,48 @@ function dec2hex($r, $g, $b) {
 }
 
 function output_file($cache_file) {
-    $ts = filemtime($cache_file);
-
-    $ifmodsince = isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])?$_SERVER['HTTP_IF_MODIFIED_SINCE']:false;
-    if ($ifmodsince && strtotime($ifmodsince) >= $ts) {
-        header('HTTP/1.0 304 Not Modified', true, 304);
-        return;
-    }
-    
-    $etag = isset($_SERVER['HTTP_IF_NONE-MATCH'])?$_SERVER['HTTP_IF_NONE-MATCH']:false;
-    if($etag && $etag == md5($ts)) {
-        header('HTTP/1.0 304 Not Modified', true, 304);
-        return;
-    }
-    
-    header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', $ts));
-    header('ETag: "'.md5($ts).'"');
-
-    switch(exif_imagetype($cache_file)) {
-        case IMAGETYPE_PNG:
-            header('Content-Type: image/png');
-            break;
-        case IMAGETYPE_GIF:
-            header('Content-Type: image/gif');
-            break;
-        case IMAGETYPE_JPEG:
-            header('Content-Type: image/jpeg');
-            break;
-    }
-    readfile($cache_file);
-//    exit;
+	$ts = filemtime($cache_file);
+	
+	$ifmodsince = isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])?$_SERVER['HTTP_IF_MODIFIED_SINCE']:false;
+	if ($ifmodsince && strtotime($ifmodsince) >= $ts) {
+		header('Cache-Control: max-age='.CACHE_KEEP_TIME, true);
+		header('HTTP/1.0 304 Not Modified', true, 304);
+		return;
+	}
+	
+	$etag = isset($_SERVER['HTTP_IF_NONE-MATCH'])?$_SERVER['HTTP_IF_NONE-MATCH']:false;
+	if($etag && $etag == md5($ts)) {
+		header('Cache-Control: max-age='.CACHE_KEEP_TIME, true);
+		header('HTTP/1.0 304 Not Modified', true, 304);
+		return;
+	}
+	
+	header('Cache-Control: max-age='.CACHE_KEEP_TIME, true); // cache image for 7 days
+	header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', $ts), true);
+	header('ETag: "'.md5($ts).'"', true);
+	
+	switch(exif_imagetype($cache_file)) {
+		case IMAGETYPE_PNG:
+			header('Content-Type: image/png');
+			break;
+		case IMAGETYPE_GIF:
+			header('Content-Type: image/gif');
+			break;
+	}
+	readfile($cache_file);
 }
 
 
 function bounding_box($text, $font=NULL, $size=NULL) {
-    global $FLIR;
-
-    if(is_null($font))
-        $font = $FLIR['postscript'] ? $FLIR['ps']['font'] : $FLIR['font'];
-        
-    if(is_null($size))
-        $size = $FLIR['postscript'] ? $FLIR['size'] : $FLIR['size_pts'];
-    elseif($FLIR['postscript'])
-        $size = get_points($FLIR['dpi'], $size); // convert to points
-
-    if($FLIR['postscript'])
-        return convertPSBoundingBox(imagepsbbox($text, $font, $size, $FLIR['ps']['space'], $FLIR['ps']['kerning'], 0));
-    else
-        return convertBoundingBox(imagettfbbox($size, 0, $font, $text));
+	global $FLIR;
+	
+	if(is_null($font))
+		$font = $FLIR['font'];
+	
+	if(is_null($size))
+		$size = $FLIR['size_pts'];
+	
+	return convertBoundingBox(imagettfbbox($size, 0, $font, $text));
 }
 
 /*
@@ -441,122 +478,64 @@ $width = abs($bounds[2]) + abs($bounds[0]);
 $height = abs($bounds[7]) + abs($bounds[1]);
 */    
 function convertBoundingBox ($bbox) {
-    if ($bbox[0] >= -1)
-        $xOffset = -abs($bbox[0] + 1);
-    else
-        $xOffset = abs($bbox[0] + 2);
-    $width = abs($bbox[2] - $bbox[0]);
-    if ($bbox[0] < -1) $width = abs($bbox[2]) + abs($bbox[0]) - 1;
-    $yOffset = abs($bbox[5] + 1);
-    if ($bbox[5] >= -1) $yOffset = -$yOffset; // Fixed characters below the baseline.
-    $height = abs($bbox[7]) - abs($bbox[1]);
-    if ($bbox[3] > 0) $height = abs($bbox[7] - $bbox[1]) - 1;
-    return array(
-        'width' => $width,
-        'height' => $height,
-        'xOffset' => $xOffset, // Using xCoord + xOffset with imagettftext puts the left most pixel of the text at xCoord.
-        'yOffset' => $yOffset, // Using yCoord + yOffset with imagettftext puts the top most pixel of the text at yCoord.
-        'belowBasepoint' => max(0, $bbox[1])
-    );
-}
-
-function convertPSBoundingBox ($bbox) {
-//echo 'here';
-//print_r($bbox);
-    if ($bbox[0] >= -1)
-        $xOffset = -abs($bbox[0] + 1);
-    else
-        $xOffset = abs($bbox[0] + 2);
-    
-    $yOffset = abs($bbox[1] + 1);
-    
-    $width = abs($bb[2] - $bb[0]);
-    $height = abs($bbox[1]) - abs($bbox[3]);
-
-    return array(
-      'width' => $width,
-      'height' => $height,
-      'xOffset' => $xOffset, // Using xCoord + xOffset with imagettftext puts the left most pixel of the text at xCoord.
-      'yOffset' => $yOffset, // Using yCoord + yOffset with imagettftext puts the top most pixel of the text at yCoord.
-      'belowBasepoint' => max(0, $bbox[1])
-    );
-}
-
-/*
-imagettftext( resource $image , float $size , float $angle , int $x , int $y , int $color , string $fontfile , string $text )
-imagepstext( resource $image , string $text , resource $font_index 
-                , int $size , int $foreground , int $background 
-                , int $x  , int $y  
-                [, int $space  [, int $tightness  [, float $angle  [, int $antialias_steps  ]]]] )
-*/
-function render_text($bounds, $text=NULL, $img=NULL, $realheight=NULL) {
-    global $FLIR;
-    
-    if(!is_null($realheight))
-        $REAL_HEIGHT_BOUNDS = $realheight;
-    else
-        global $REAL_HEIGHT_BOUNDS;
-    
-    if(is_null($img))
-        global $image;
-    else
-        $image = $img;
-        
-    if(is_null($text))
-        $text = $FLIR['postscript'] ? $FLIR['original_text'] : $FLIR['text'];
-    
-    if($FLIR['postscript']) {
-        imagepstext($image, $text, $FLIR['ps']['font'], $FLIR['size'], gd_color($image)
-                        , imagecolorallocatealpha($image        , $FLIR['bkgcolor']['red']
-                                                                        , $FLIR['bkgcolor']['green']
-                                                                        , $FLIR['bkgcolor']['blue'], 127)
-                        , $bounds['xOffset'], $REAL_HEIGHT_BOUNDS['yOffset']
-                        , $FLIR['ps']['space'], $FLIR['ps']['kerning'], 0, ($FLIR['size'] < 20 ? 16 : 4 ));
-    }else {
-        imagettftext($image, $FLIR['size_pts'], 0, $bounds['xOffset']
-                        , $REAL_HEIGHT_BOUNDS['yOffset'], gd_color($image), $FLIR['font'], $text);
-    }
+	if ($bbox[0] >= -1)
+		$xOffset = -abs($bbox[0] + 1);
+	else
+		$xOffset = abs($bbox[0] + 2);
+	$width = abs($bbox[2] - $bbox[0]);
+	if ($bbox[0] < -1) $width = abs($bbox[2]) + abs($bbox[0]) - 1;
+	$yOffset = abs($bbox[5] + 1);
+	if ($bbox[5] >= -1) $yOffset = -$yOffset; // Fixed characters below the baseline.
+	$height = abs($bbox[7]) - abs($bbox[1]);
+	if ($bbox[3] > 0) $height = abs($bbox[7] - $bbox[1]) - 1;
+	return array(
+		'width' => $width,
+		'height' => $height,
+		'xOffset' => $xOffset, // Using xCoord + xOffset with imagettftext puts the left most pixel of the text at xCoord.
+		'yOffset' => $yOffset, // Using yCoord + yOffset with imagettftext puts the top most pixel of the text at yCoord.
+		'belowBasepoint' => max(0, $bbox[1])
+	);
 }
 
 function is_number($str, $bAllowDecimals=false, $bAllowZero=false, $bAllowNeg=false) {
-    if($bAllowDecimals)
-        $regex = $bAllowZero?'[0-9]+(\.[0-9]+)?': '(^([0-9]*\.[0-9]*[1-9]+[0-9]*)$)|(^([0-9]*[1-9]+[0-9]*\.[0-9]+)$)|(^([1-9]+[0-9]*)$)';
-    else
-        $regex = $bAllowZero?'[0-9]+': '[1-9]+[0-9]*';
-        
-    return preg_match('#^'.($bAllowNeg?'\-?':'').$regex.'$#', $str);
+	if($bAllowDecimals)
+		$regex = $bAllowZero?'[0-9]+(\.[0-9]+)?': '(^([0-9]*\.[0-9]*[1-9]+[0-9]*)$)|(^([0-9]*[1-9]+[0-9]*\.[0-9]+)$)|(^([1-9]+[0-9]*)$)';
+	else
+		$regex = $bAllowZero?'[0-9]+': '[1-9]+[0-9]*';
+	
+	return preg_match('#^'.($bAllowNeg?'\-?':'').$regex.'$#', $str);
 }
 
 function is_hexcolor($str) {
-    return preg_match('#^[a-f0-9]{6}$#i', $str);
+	return preg_match('#^[a-f0-9]{6}$#i', $str);
 }
 
 function convert_color($color, $bHex=false, $default_color='000000') {
-    $rgb = array();
-    if(preg_match('#(\(([0-9]{1,3}), ?([0-9]{1,3}), ?([0-9]{1,3})(, ?([0-9]{1,3}))?\))#i', $color, $m)) {
-        $rgb['red']     = $m[2];
-        $rgb['green']     = $m[3];
-        $rgb['blue']    = $m[4];
-    }elseif(preg_match('#[a-f0-9]{3}|[a-f0-9]{6}#i', $color)) {
-            if(strlen($color) == 3)
-                $color = $color[0].$color[0].$color[1].$color[1].$color[2].$color[2];
-                
-            $colors     = explode(',',substr(chunk_split($color, 2, ','), 0, -1));
-            $rgb['red']     = hexdec($colors[0]);
-            $rgb['green']     = hexdec($colors[1]);
-            $rgb['blue']    = hexdec($colors[2]);
-    }else {
-        $rgb = css2hex($color, $default_color);
-    }
-
-    return $bHex ? dec2hex($rgb['red'],$rgb['green'],$rgb['blue']) : $rgb;
+	$rgb = array();
+	if(preg_match('#(([0-9]{1,3}),\s*([0-9]{1,3}),\s*([0-9]{1,3})(,\s*([0-9]{1,3}))?)#i', $color, $m)) {
+		$rgb['red']    = $m[2];
+		$rgb['green']  = $m[3];
+		$rgb['blue']   = $m[4];
+	}elseif(preg_match('#^[a-f0-9]{3}|[a-f0-9]{6}$#i', trim($color))) {
+		if(strlen($color) == 3)
+			$color = $color[0].$color[0].$color[1].$color[1].$color[2].$color[2];
+		
+		$colors			= explode(',',substr(chunk_split($color, 2, ','), 0, -1));
+		$rgb['red']		= hexdec($colors[0]);
+		$rgb['green']	= hexdec($colors[1]);
+		$rgb['blue']	= hexdec($colors[2]);
+	}else {
+		$rgb = css2hex($color, $default_color);
+	}
+	
+	return $bHex ? dec2hex($rgb['red'],$rgb['green'],$rgb['blue']) : $rgb;
 }
 
 function is_transparent($str) {
-    if(trim($str) == '' || $str == 'transparent' || $str == 'none')
+    if($str == '0' || trim($str) == '' || $str == 'transparent' || $str == 'none')
         return true;
         
-    if(false !== strpos($str, 'rgba') && preg_match('#\([0-9]{1,3}, ?[0-9]{1,3}, ?[0-9]{1,3}, 0\)#i', $str, $m))
+    if(preg_match('#[0-9]{1,3},\s*?[0-9]{1,3},\s*?[0-9]{1,3},\s*0#i', $str, $m))
         return true;
         
     return false;
@@ -564,6 +543,41 @@ function is_transparent($str) {
 
 function get_points($dpi, $pxsize) {
     return round(((72/$dpi)*$pxsize), 3);
+}
+
+function parse_css_codes($str) {
+	if(trim($str) == '') {
+		$CSS = array();
+	}else {
+		$defaults = array('background-color' ,'color' ,'font-family'
+											,'font-size' ,'letter-spacing' ,'line-height'
+											,'text-align' ,'font-stretch' ,'font-style'
+											,'font-variant' ,'font-weight' ,'opacity'
+											,'text-decoration');
+		$passed = explode('|', $str);
+		$CSS = array_combine(array_slice($defaults, 0, count($passed))
+									, $passed);
+	}
+								
+	// convert codes back into readable
+	$CSS['font-style'] = $CSS['font-style']=='1'? 'italic' : '';
+
+	switch($CSS['font-weight']) {
+		case '-1':
+			$CSS['font-weight'] = 'lighter';
+			break;
+		case '0':
+			$CSS['font-weight'] = 'normal';
+			break;
+		case '1':
+			$CSS['font-weight'] = 'bold';
+			break;
+		case '2':
+			$CSS['font-weight'] = 'bolder';
+			break;
+	}
+	
+	return $CSS;
 }
 
 function discover_font($default, $passed) {
@@ -584,23 +598,23 @@ function discover_font($default, $passed) {
 }
 
 function match_font_style($font) {
-    global $FStyle;
+    global $CSS;
 
     $best_match = array();
     $best_match_value = -1.0;
     foreach($font as $k => $v) {
-        $stretch     = $FStyle['cStretch']=='normal'         || $FStyle['cStretch']==''         ? '' : $FStyle['cStretch'];
-        $style         = $FStyle['cFontStyle']=='normal'     || $FStyle['cFontStyle']==''         ? '' : $FStyle['cFontStyle'];
-        $variant     = $FStyle['cVariant']=='normal'         || $FStyle['cVariant']==''         ? '' : $FStyle['cVariant'];
-        $weight         = $FStyle['cWeight']=='normal'         || $FStyle['cWeight']==''             ? '' : $FStyle['cWeight'];
-        $decoration = $FStyle['cDecoration']=='none'     || $FStyle['cDecoration']==''     ? '' : $FStyle['cDecoration'];
+        $stretch     = $CSS['font-stretch']=='normal'			|| $CSS['font-stretch']==''			? '' : $CSS['font-stretch'];
+        $style       = $CSS['font-style']=='normal'			|| $CSS['font-style']==''  	     	? '' : $CSS['font-style'];
+        $variant     = $CSS['font-variant']=='normal'			|| $CSS['font-variant']==''			? '' : $CSS['font-variant'];
+        $weight      = $CSS['font-weight']=='normal'			|| $CSS['font-weight']==''				? '' : $CSS['font-weight'];
+        $decoration  = $CSS['text-decoration']=='none'		|| $CSS['text-decoration']==''		? '' : $CSS['text-decoration'];
         
         $total = (
-                            ($v['font-stretch']        == $stretch     ? 1 : 0) 
-                        +    ($v['font-style']            == $style        ? 1 : 0)
+                             ($v['font-stretch']        == $stretch     ? 1 : 0) 
+                        +    ($v['font-style']          == $style			? 1 : 0)
                         +    ($v['font-variant']        == $variant     ? 1 : 0)
-                        +    ($v['font-weight']        == $weight         ? 1 : 0)
-                        +    ($v['text-decoration']    == $decoration ? 1 : 0)
+                        +    ($v['font-weight']         == $weight		? 1 : 0)
+                        +    ($v['text-decoration']     == $decoration	? 1 : 0)
                     );
         if($total>0)
             $total /= 5;
@@ -615,39 +629,55 @@ function match_font_style($font) {
 }
 
 function space_out($text, $spaces) {
-    $ret = '';
-    for($i=0; $i<strlen($text); $i++) {
-        $ret .= $text[$i].str_repeat(' ', $spaces);
-    }
-    
-    return rtrim($ret);
+	$ret = '';
+	$spacetxt = str_repeat(' ', $spaces);
+	for($i=0; $i<strlen($text); $i++)
+		$ret .= $text[$i].$spacetxt;
+	return rtrim($ret);
+}
+
+function verify_safemode() {
+	global $ERROR_MSGS;
+	
+	if(file_exists(CACHE_DIR.'/sm-verified')) return;
+	
+	if(ini_get('safe_mode') && !CACHE_SINGLE_DIR)
+		err('SM_MLD');
+	
+	touch(CACHE_DIR.'/sm-verified');
+	return true;
 }
 
 function verify_gd() {
-    global $ERROR_MSGS;
-    
-    if(!extension_loaded('gd'))
-        err('GD_NOT_INSTALLED');
-    
-    if(function_exists('gd_info')) {
-        $gdinfo = gd_info();
-        
-        $errors = array();
-        preg_match('/\d/', $gdinfo['GD Version'], $m);
-        if($m[0]!='2')
-            $errors[] = $ERROR_MSGS['GD_TOO_OLD'];            
-
-        if(!$gdinfo['FreeType Support'])
-            $errors[] = $ERROR_MSGS['GD_NO_FREETYPE'];            
-
-        if(!$gdinfo['PNG Support'] && !$gdinfo['GIF Create Support'] && !$gdinfo['JPG Support'])
-            $errors[] = $ERROR_MSGS['GD_NO_IMAGES'];
-            
-        if(!empty($errors)) {
-            echo implode('<br>', $errors);
-            exit;
-        }
-    }
+	global $ERROR_MSGS;
+	
+	if(file_exists(CACHE_DIR.'/gd-verified')) return;
+	
+	if(!extension_loaded('gd'))
+		err('GD_NOT_INSTALLED');
+	
+	if(function_exists('gd_info')) {
+		$gdinfo = gd_info();
+		
+		$errors = array();
+		preg_match('/\d/', $gdinfo['GD Version'], $m);
+		if($m[0]!='2')
+			$errors[] = $ERROR_MSGS['GD_TOO_OLD'];            
+		
+		if(!$gdinfo['FreeType Support'])
+			$errors[] = $ERROR_MSGS['GD_NO_FREETYPE'];            
+		
+		if(!$gdinfo['PNG Support'] && !$gdinfo['GIF Create Support'])
+			$errors[] = $ERROR_MSGS['GD_NO_IMAGES'];
+		
+		if(!empty($errors)) {
+			echo implode('<br>', $errors);
+			exit;
+		}
+	}
+	
+	touch(CACHE_DIR.'/gd-verified');
+	return true;
 }
 
 function gd_bkg($img=NULL) {
@@ -662,7 +692,6 @@ function gd_bkg($img=NULL) {
         case 'png':
             return imagecolorallocatealpha($image, $FLIR['bkgcolor']['red'], $FLIR['bkgcolor']['green'], $FLIR['bkgcolor']['blue'], 127);
         case 'gif':
-        case 'jpg':
             return imagecolorallocate($image, $FLIR['bkgcolor']['red'], $FLIR['bkgcolor']['green'], $FLIR['bkgcolor']['blue']);
     }
 }
@@ -698,6 +727,26 @@ function gd_alpha($img=NULL) {
     }
 }
 
+function prepare_text($str) {
+	return str_replace(array(
+								 '{*A}nbsp;'
+								, '{*A}'
+								, '{*P}'
+								, '{*LP}'
+								, '{*RP}'
+								, "\n"
+								, "\r")
+							, array(
+								 ' '
+								,'&'
+								,'+'
+								,'('
+								,')'
+								,''
+								,'')
+							, trim($str, "\t\n\r"));
+}
+
 function fix_path($str) {
     return IS_WINDOWS ? str_replace('/', '\\', $str) : str_replace('\\', '/', $str);
 }
@@ -707,50 +756,9 @@ function consttrue($const) {
 }
 
 function err($k) {
-    global $ERROR_MSGS;
-    
-    die(isset($ERROR_MSGS[$k]) ? $ERROR_MSGS[$k] : 'Unknown Error');
+	global $ERROR_MSGS;
+	die('Facelift Error: '.(isset($ERROR_MSGS[$k]) ? $ERROR_MSGS[$k] : 'Unknown Error'));
 }
-
-
-/*
- manfred at werkzeugH dot at
-27-May-2008 04:35
-here is my version for strings with utf8-characters represented as numerical entities  (e.g. &#1234;)
-*/
-
-function utf8_entities_strrev($str, $preserve_numbers = true)
-{
-  //split string into string-portions (1 byte characters, numerical entitiesor numbers)
-
-  $parts=Array();
-  while ($str)
-  {
-    if ($preserve_numbers && preg_match('/^([0-9]+)(.*)$/',$str,$m))
-    {
-      // number-flow
-      $parts[]=$m[1];
-      $str=$m[2];
-    }
-    elseif (preg_match('/^(\&#[0-9]+;)(.*)$/',$str,$m))
-    {
-      // numerical entity
-      $parts[]=$m[1];
-      $str=$m[2];
-    }
-    else
-    {
-      $parts[]=substr($str,0,1);
-      $str=substr($str,1);
-    }
-  }
-
-  $str=implode(array_reverse($parts),"");
-
-  return $str;
-}
-
-
 
 
 
@@ -908,5 +916,16 @@ if(version_compare(PHP_VERSION, '5.0.0', '<')) {
     function html_entity_decode_utf8($text) {
         return html_entity_decode($text, ENT_QUOTES, 'UTF-8');
     }
+}
+
+function pr($arr,$bReturn=false) {
+	$d  = '<pre>';
+	$d .= htmlentities(print_r($arr,true), ENT_QUOTES, 'utf-8');
+	$d .= '</pre>';
+	
+	if(!$bReturn)
+		echo $d;
+	else
+		return $d;
 }
 ?>

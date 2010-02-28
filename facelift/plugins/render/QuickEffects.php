@@ -2,7 +2,7 @@
 // JavaScript Document
 
 /*
-QuickEffects v0.3.1
+QuickEffects v0.4.0
 
 Facelift was written and is maintained by Cory Mawhorter.  
 It is available from http://facelift.mawhorter.net/
@@ -61,7 +61,7 @@ $cmdtext = escapeshellarg($FLIR['text']);
 $bounds = convertBoundingBox(imagettfbbox($FLIR['size_pts'], 0, $FLIR['font'], $FLIR['text']));
 
 $fulltrim = '';
-if($FStyle['realFontHeight']!='true') {
+if($FStyle['fixBaseline']!='true') {
 	$bounds['height'] += 200;
 	$REAL_HEIGHT_BOUNDS = $bounds;	
 	$fulltrim = '-trim +repage ';
@@ -250,7 +250,7 @@ $cmd = CONVERT.' -size '.$out_width.'x'.$out_height.' xc:'.$bkg_hex.' '
 //die($cmd);
 exec($cmd);
 
-if($FStyle['realFontHeight']=='true') { // trim sides
+if($FStyle['fixBaseline']=='true') { // trim sides
 	$info = shell_exec(CONVERT.' '.escapeshellarg(FULL_CACHE_PATH).' -trim info:');
 	if(preg_match('#(PNG|GIF|JPEG) ([0-9]+)x([0-9]+) ([0-9]+)x([0-9]+)([+-][0-9]+)([+-][0-9]+)#', $info, $m))
 		exec(CONVERT.' '.escapeshellarg(FULL_CACHE_PATH)
