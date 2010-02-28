@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.8.9
+Version: 0.8.9.1
 Author URI: http://www.23systems.net/
 */
 global $g_flir_url, $g_facelift_url;
@@ -76,6 +76,7 @@ if (!class_exists('wp_flir')) {
       add_action("admin_menu", array(&$this, "addAdminPages"));
       add_action("admin_head", array(&$this, "addAdminHeader"));
 //      add_action("wp_head", array(&$this, "add_css"));
+      
       $this->adminOptions = $this->getAdminOptions($this->adminOptionsName);
       $this->adminConfig = $this->getAdminOptions($this->adminConfigName);
       if (!($this->detect_ie())) {
@@ -83,7 +84,8 @@ if (!class_exists('wp_flir')) {
         add_action("wp_footer", array(&$this, 'wpFooterIntercept'));
       }
       $this->adminInit = get_option($this->adminInitName);
-			if (!$this->adminInit) {
+			add_filter( 'plugin_row_meta',array( &$this, 'RegisterFLIRLinks'),10,2);
+      if (!$this->adminInit) {
 		  	$this->flirInit();
 			}
     }
@@ -186,6 +188,23 @@ if (!class_exists('wp_flir')) {
 
     function addAdminPages() {
       add_submenu_page('themes.php', "FLIR", "FLIR", 10, "FLIR", array(&$this, "outputSubAdminPage"));
+    }
+
+    function getBaseName() {
+		  return plugin_basename(__FILE__);
+	  }
+
+    function RegisterFLIRLinks($links, $file) {
+    	$base = wp_flir::getBaseName();
+    	if ($file == $base) {
+    		$links[] = '<a href="themes.php?page=FLIR">' . __('Settings') . '</a>';
+    		$links[] = '<a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/frequently-asked-questions/">' . __('FAQ') . '</a>';
+    		$links[] = '<a href="http://www.23systems.net/bbpress/forum/facelift-image-replacement">' . __('Support') . '</a>';
+    		$links[] = '<a href="http://www.23systems.net/donate/">' . __('Donate') . '</a>';
+    		$links[] = '<a href="http://twitter.com/23systems">' . __('Follow on Twitter') . '</a>';
+    		$links[] = '<a href="http://www.facebook.com/pages/Austin-TX/23Systems-Web-Devsign/94195762502">' . __('Facebook Page') . '</a>';
+    	}
+    	return $links;
     }
 
     /*---- Outputs the HTML for the admin sub page. ----*/
