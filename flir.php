@@ -327,7 +327,7 @@ if (!class_exists('wp_flir')) {
       }
       ?>
 		<div class="wrap">
-			<h2><?php _e('FLIR for WordPress Configuration v0.8.9 (Facelift v2.0b3)', 'FLIR');?></h2>
+			<h2><?php _e('FLIR for WordPress Configuration v0.8.9.1 (Facelift v2.0b3)', 'FLIR');?></h2>
 			<br style="clear:both;" />
 <?php
 			require('admin/flir-config.php');
