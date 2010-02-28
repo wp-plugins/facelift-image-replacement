@@ -1,0 +1,16 @@
+@charset "utf-8";
+/* CSS Document */
+
+#flircopy-tabs a { float:left; background:white; border:2px solid black; padding:0 5px; margin-right: 5px; margin-bottom:-2px; }
+#flircopy-tabs a:hover { background:#cccccc; }
+#flircopy-body { clear:both; background:white; border:2px solid black; border-bottom: none; height:200px; }
+#flircopy-inr { padding:5px; }
+
+#flircopy-text { font-family:Arial, Helvetica, sans-serif; }
+#flircopy-text,#flircopy-html,#flircopy-htmlpreview { width:380px; height:186px; display:none; }
+
+#flircopy-body .flircopy-selected { display:block; }
+#flircopy-tabs .flircopy-selected { border-bottom-color:white; }
+
+#flircopy-nav { background:white; padding-right:5px; border:2px solid black; border-top:none; text-align:right; }
+#flircopy-nav #flircopy-inr { padding-top:0; padding-bottom:0; }
