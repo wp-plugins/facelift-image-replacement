@@ -2,9 +2,9 @@
 Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift, text, headings
-Requires at least: 2.6
+Requires at least: 2.8
 Tested up to: 2.9.2
-Stable tag: 0.8.9
+Stable tag: 0.8.9.1
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -22,9 +22,7 @@ You can see examples of what it does here: <a href="http://facelift.mawhorter.ne
 
 If using a version prior to 0.7.0 please <em>delete</em> your existing version before installing this version =
 
-If upgrading from a version older than 0.8.9 you must have the `wp_footer()` call in your template for FLIR to work - see `/wp-content/theme/default/footer.php` for example.
-
-Before running autoupdate please empty your `facelift/cache` folder.
+Before running autoupdate please empty your `facelift/cache` folder.  This can be done from the plugin under FLIR for WordPress Utilities It will install and update but depending on your how long your scripts are allowed to run there is a possibility that the update will time out if you have a very large number of files in your cache.
 
 == Installation ==
 
@@ -49,6 +47,7 @@ If GD is not installed on your server you will have to recompile PHP to include 
 = Notes =
 
 * QuickEffect Plugin is not implemented yet
+* SuperCache Plugin is not implemented yet
 * If using a version older than 0.7 completely delete any old verions before upgrading
 * You cannot auto-upgrade from versions older 0.7.0
 * Text remains intact in source so search engines see your page as text!
@@ -59,6 +58,13 @@ If GD is not installed on your server you will have to recompile PHP to include 
 2. After Facelift Image Replacement
 
 == Changelog ==
+
+= 0.8.9.1 =
+
+* Minor interface updates
+ * Quick links in plugins list
+ * Added additiona support and FAQ links to admin panel 
+* Readme and faq update
 
 = 0.8.9 =
 
@@ -196,6 +202,25 @@ If GD is not installed on your server you will have to recompile PHP to include 
 * Check the FLIR admin panel under the design menu and make certain all the options are set in the FLIR Configuration section.  Read the help text on the right of each option for information.
 * Check the FLIR admin panel under the design menu and make certain all the options you want are set in the Elements to Replace section.  Heading 1 is generally used for the blog heading, Heading 2 is used for the posts on the main page and on individual post pages, Heading 3 is often used with posts on the catagories and tags pages.  Small is often used for the date and author of the post.
 
+= When I set FLIR to wrap the text the text overlaps on a single line, how can I fix that? =
+
+FLIR 2.0b3 has a minor issue where the text will overlap if line-height isn't specified in your CSS file for that particular style.  Adding line-height equal to the font size should correct that.  For example
+
+`a.pagetitle{`
+`    font-weight:bold;`
+`    font-size:24px;`
+`    display:block;`
+`}`
+
+Can be updated like so to add line-height:
+
+`a.pagetitle{`
+`    font-weight:bold;`
+`    font-size:24px;`
+`    line-height:24px;`
+`    display:block;`
+`}`
+
 = Is FLIR be configurable from the admin panel? =
 
 FLIR is almost completely configurable from the admin panel.  Eventually it is planned to be able to configure FLIR almost completely from the admin panel.  At present to configure how and what fonts are used with flir and certain element to be replaced by FLIR.
@@ -235,7 +260,8 @@ You can further improve the speed of both FLIR and WordPress in general by using
 
 == Upcoming Features ==
 
-* Quick Effects (requires ImageMagick) ~v0.9.5
+* Supercache option ~v0.9
+* QuickEffects (requires ImageMagick) ~v0.9.5
 * More...
 
 == Under consideration ==
