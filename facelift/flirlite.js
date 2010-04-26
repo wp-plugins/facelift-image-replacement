@@ -174,7 +174,7 @@ function FLIRStyle(options) {
 	if(options && typeof options.css == 'string')
 		options.css = this.pcs(options.css);
 		
-	if(typeof this.loadopts == _UD_) console.log(this);
+//	if(typeof this.loadopts == _UD_) console.log(this);
 	this.loadopts(options);
 }
 

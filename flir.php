@@ -4,7 +4,7 @@ Plugin Name: FLIR for WordPress
 Plugin URI: http://www.23systems.net/plugins/facelift-image-replacement-flir/
 Description: Facelift Image Replacment for WordPress is a plugin and script is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.  It is based on Facelift Image Replacement by <a href="http://facelift.mawhorter.net/">Cory Mawhorter</a>.
 Author: Dan Zappone
-Version: 0.8.9.1
+Version: 0.8.9.2
 Author URI: http://www.23systems.net/
 */
 global $g_flir_url, $g_facelift_url;
@@ -368,30 +368,30 @@ if (!class_exists('wp_flir')) {
 				switch ($g_flir_method) {
           case 'jquery':
             if (!($this->external_js())) {
-          		wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("jquery"), '1.2.2', true);
+          		wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("jquery"), '2.0.0', true);
           	}
           	else {
-            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '2.0.0', true);
             }
             break;
           case 'scriptaculous':
         	  if (!($this->external_js())) {
-        		  wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("scriptaculous"), '1.2.2', true);
+        		  wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("scriptaculous"), '2.0.0', true);
         		}
         		else {
-            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '2.0.0', true);
             }
             break;
           case 'prototype':
         	  if (!($this->external_js())) {
-        		  wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("prototype"), '1.2.2', true);
+        		  wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js', array("prototype"), '2.0.0', true);
         		}
         		else {
-            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
+            	wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '2.0.0', true);
             }
             break;
           default:
-            wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '1.2.2', true);
+            wp_enqueue_script('flir_script', $g_facelift_url.'flirmin.js','', '2.0.0', true);
         }
     }
 
