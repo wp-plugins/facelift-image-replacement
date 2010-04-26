@@ -4,7 +4,7 @@ Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift, text, headings
 Requires at least: 2.8
 Tested up to: 2.9.2
-Stable tag: 0.8.9.1
+Stable tag: 0.8.9.2
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
 
@@ -35,14 +35,14 @@ PHP and GD. Little testing has been done with different versions of PHP. If you 
 If GD is not installed on your server you will have to recompile PHP to include GD. If you are comfortable in WHM for cPanel, you can do that under the "Update Apache" tab (check the "GD" box). Check your settings carefully (especially the PHP version - cPanel may try to change it) before you hit build. Plesk and ISPConfig should have GD enabled by default.  If you are not comfortable doing it yourself, ask your hosting company to do it for you. (Thanks Steve!)
 
 1. Extract to your `wp-content/plugins` directory.
-2. Look in `wp-content/plugins/facelift-image-replacement/facelift`
-3. Set the `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` to be writable
-3. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable
-4. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder
-5  Make sure you have the `wp_footer()` call in the footer of your template See `/wp-content/theme/default/footer.php` for example.
-6. Activate plugin in WordPress admin panel
-7. Set FLIR configuration in the admin panel - `config-flir.php` must be writable for changes to take effect.
-8. Customize tags for FLIR on FLIR submenu under the Design menu
+2. Look in `wp-content/plugins/facelift-image-replacement/facelift`.
+3. Set the `wp-content/plugins/facelift-image-replacement/facelift/config-flir.php` to be writable (`chmod a+w config-flir.php`).
+4. Set the `wp-content/plugins/facelift-image-replacement/facelift/cache` to be writable (`chmod a+w /cache`).
+5. Add fonts of your choice to `wp-content/plugins/facelift-image-replacement/facelift/fonts` folder.
+6  Make sure you have the `wp_footer()` call in the footer of your template See `/wp-content/theme/default/footer.php` for example.
+7. Activate plugin in WordPress admin panel
+8. Set FLIR configuration in the admin panel - `config-flir.php` must be writable for changes to take effect.
+9. Customize tags for FLIR on FLIR submenu under the Design menu
 
 = Notes =
 
@@ -59,11 +59,17 @@ If GD is not installed on your server you will have to recompile PHP to include 
 
 == Changelog ==
 
+= 0.8.9.2 =
+
+* Removed console logging from flir.js, flirmin.js, flirlite.js, flirlitemin.js
+ * Was causing errors in IE and unnecessary logging in Firefox. 
+* Recompressed flirmin.js, flirlitemin.js using YUI and Packer for even smaller minification. 
+
 = 0.8.9.1 =
 
 * Minor interface updates
  * Quick links in plugins list
- * Added additiona support and FAQ links to admin panel 
+ * Added additional support and FAQ links to admin panel 
 * Readme and faq update
 
 = 0.8.9 =
@@ -90,7 +96,7 @@ If GD is not installed on your server you will have to recompile PHP to include 
 
 = 0.8.7 =
 
-* Fixed typo in JavaScript which create issue with IE7.
+* Fixed typo in JavaScript which creates issue with IE7.
 
 = 0.8.6 =
 

@@ -751,7 +751,7 @@ FLIR.flirIERepObj 	= [];
 FLIR.flirIEHovEls 	= [];
 FLIR.flirIEHovStyles = [];	
 FLIR.hover = function(e) {
-	console.log('hover');
+//	console.log('hover');
 	var o=FLIR.evsrc(e);
 	var targ=o;
 	var targDescHover = o.flirHasHover;
