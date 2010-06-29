@@ -3,7 +3,7 @@ Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
 Tags: flir, titles, posts, images, themes, facelift, text, headings
 Requires at least: 2.8
-Tested up to: 2.9.2
+Tested up to: 3.0
 Stable tag: 0.8.9.2
 
 Facelift Image Replacment is a script that generates image representations of text on your web page in fonts that visitors would not be able to see.
@@ -109,7 +109,7 @@ If GD is not installed on your server you will have to recompile PHP to include 
 * Add checkbox to allow the use of external JavaScript libraries - jQuery, Scriptaculous and Prototype support only
 * Hide Elements to Replace section when using Automatic method as Elements to Replace is not used in that case.
 * Add checkbox to disable FLIR for IE6 or lower users to avoid rendering issues that sometimes occur.
-* Fix the global Use FancyFonts not showing it’s activated.
+* Fix the global Use FancyFonts not showing it's activated.
 * Other minor interface fixes for WordPress 2.7
 * Changed internal selection methods to increase speed and reduce memory usage.
 
@@ -120,16 +120,16 @@ If GD is not installed on your server you will have to recompile PHP to include 
  * Basic Callback Functions
  * Better error handling
  * Bug in generateURL causing HTML not to be sanitized
- * Added functionality/bug fixes for “wrap” mode.  Better line-height support.
+ * Added functionality/bug fixes for "wrap" mode.  Better line-height support.
  * Rewrote element replacement algorithm. You no longer need to encapsulate plain text in span elements to have it replaced.  The new algo is recursive so it can replace any number of child elements.  You could even run it on document.body if you wanted to!
  * Added flir-image and flir-span classnames to the elements flir creates
  * Javascript Plugin support!
  * Moved DetectImageState code from facelift.js into a Javascript plugin
  * querySelectorAll support for the browsers that support it (Safari, FF3.1 alpha)
- * Font size modifier for cSize in FLIRStyle. You can now specify a font size calculation to be applied against the CSS font size.  For example, if you want the generated image to have a font size that is 140% the one you specified in your CSS you could do   cSize:’*1.4'.  All font sizes will then be multipled by 1.4.
+ * Font size modifier for cSize in FLIRStyle. You can now specify a font size calculation to be applied against the CSS font size.  For example, if you want the generated image to have a font size that is 140% the one you specified in your CSS you could do   cSize:'*1.4'.  All font sizes will then be multipled by 1.4.
  * FLIRStyle.buildURL no longer requires an HTML object to be passed
  * Hover caching problems fixed.  Better hover style support.
- * JPG and GIF support! Set the “output” option in FLIRStyle.  The default output option is auto.  Auto will cause the generated image to be a transparent png if the element doesn’t have a background color set.  Otherwise it will use GIF.
+ * JPG and GIF support! Set the "output" option in FLIRStyle.  The default output option is auto.  Auto will cause the generated image to be a transparent png if the element doesn't have a background color set.  Otherwise it will use GIF.
  * Hover now only works with <A> elements.
 * Rewrote code for better readability and adherence to code conventions (hopefully)
 * Redesigned admin interface to be more logically organized (again, hopefully)
@@ -210,7 +210,7 @@ If GD is not installed on your server you will have to recompile PHP to include 
 
 = When I set FLIR to wrap the text the text overlaps on a single line, how can I fix that? =
 
-FLIR 2.0b3 has a minor issue where the text will overlap if line-height isn't specified in your CSS file for that particular style.  Adding line-height equal to the font size should correct that.  For example
+FLIR 2.0b3 has a minor issue where the text will overlap if line-height isn't specified in your CSS file for that particular style. Adding line-height equal to the font size should correct that. For example
 
 `a.pagetitle{`
 `    font-weight:bold;`
