@@ -101,7 +101,7 @@
                     $dir_handle = opendir($dirname);
                 } 
                 while($file = readdir($dir_handle)) { 
-                    if($file != "." && $file != "..") { 
+                    if($file != "." && $file != ".." && $file != '.svn') { 
                         if(!is_dir($dirname."/".$file)){
                             unlink ($dirname."/".$file);
                         } 

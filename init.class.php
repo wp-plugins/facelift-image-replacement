@@ -4,6 +4,10 @@
             /**
             * Initialize or re-initialize FLIR
             */
+            /**
+            * TODO -c rewrite, important -o Dan Zappone: Rewrite initialization as it doesn't work!
+            * 
+            */
             function flirInit(){
                 global $g_facelift_fonts_path;
 
@@ -15,9 +19,9 @@
                     $cacheCleanupFrequency  = $flirConfig['cache_cleanup_frequency'];
                     $cacheKeepTime          = $flirConfig['cache_keep_time'];
                     $cacheSingleDir         = $flirConfig['cache_single_dir'];
-                    $cacheDir                = 'cache';
+                    $cacheDir               = 'cache';
                     $fontDir                = 'fonts';
-                    $pluginDir                 = 'plugins';
+                    $pluginDir              = 'plugins';
                     $horizontalTextBounds   = $flirConfig['horizontal_text_bounds'];
                     $javascriptMethod       = $flirConfig['javascript_method'];
                     $externalJavaScript     = $flirConfig['external_javascript'];
@@ -50,9 +54,9 @@
                     $cacheCleanupFrequency  = '-1';
                     $cacheKeepTime          = '604800';
                     $cacheSingleDir         = 'false';
-                    $cacheDir                = 'cache';
+                    $cacheDir               = 'cache';
                     $fontDir                = 'fonts';
-                    $pluginDir                 = 'plugins';
+                    $pluginDir              = 'plugins';
                     $horizontalTextBounds   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]{}()_';
                     $javascriptMethod       = 'automatic';
                     $externalJavaScript     = '0';

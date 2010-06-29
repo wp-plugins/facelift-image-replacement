@@ -10,6 +10,7 @@
     global $g_flir_url, $g_facelift_url;
     global $g_facelift_config_path, $g_facelift_path, $g_facelift_cache_path, $g_facelift_fonts_path;
     global $g_flir_method, $g_flir_fonts;
+    global $g_flir_messages;
 
     $g_flir_url     = WP_PLUGIN_URL.'/facelift-image-replacement';
     $g_facelift_url = $g_flir_url.'/facelift/';
@@ -17,17 +18,20 @@
     $g_facelift_cache_path = $g_facelift_path.'cache';
     $g_facelift_fonts_path = $g_facelift_path.'fonts';
     $g_facelift_config_path = $g_facelift_path.'config-flir.php';
+    $g_flir_messages = '';
 
+    /*
     if (!function_exists("flirReload")) {
-        function flirReload($update) {
-            $location = get_option('siteurl').'/wp-admin/themes.php?page=FLIR';
-            echo '<script>'."\r\n";
-            echo '<!--'."\r\n";
-            echo 'window.location="'.$location.'&updated='.$update.'"'."\r\n";
-            echo '//-->'."\r\n";
-            echo '</script>'."\r\n";
-        }
+    function flirReload($update) {
+    $location = get_option('siteurl').'/wp-admin/themes.php?page=FLIR';
+    echo '<script>'."\r\n";
+    echo '<!--'."\r\n";
+    echo 'window.location="'.$location.'&updated='.$update.'"'."\r\n";
+    echo '//-->'."\r\n";
+    echo '</script>'."\r\n";
     }
+    }
+    */
 
     if (!function_exists('wp_flir_deactivation')) {
         function wp_flir_deactivation() {
@@ -133,12 +137,12 @@
             function RegisterFLIRLinks($links, $file) {
                 $base = plugin_basename(__FILE__);
                 if ($file == $base) {
-                    $links[] = '<a href="themes.php?page=FLIR">' . __('Settings') . '</a>';
-                    $links[] = '<a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/frequently-asked-questions/">' . __('FAQ') . '</a>';
-                    $links[] = '<a href="http://www.23systems.net/bbpress/forum/facelift-image-replacement">' . __('Support') . '</a>';
-                    $links[] = '<a href="http://www.23systems.net/donate/">' . __('Donate') . '</a>';
-                    $links[] = '<a href="http://twitter.com/23systems">' . __('Follow on Twitter') . '</a>';
-                    $links[] = '<a href="http://www.facebook.com/pages/Austin-TX/23Systems-Web-Devsign/94195762502">' . __('Facebook Page') . '</a>';
+                    $links[] = '<a href="themes.php?page=FLIR">' . __('Settings','FLIR') . '</a>';
+                    $links[] = '<a href="http://www.23systems.net/plugins/facelift-image-replacement-flir/frequently-asked-questions/">' . __('FAQ','FLIR') . '</a>';
+                    $links[] = '<a href="http://www.23systems.net/bbpress/forum/facelift-image-replacement">' . __('Support','FLIR') . '</a>';
+                    $links[] = '<a href="http://www.23systems.net/donate/">' . __('Donate','FLIR') . '</a>';
+                    $links[] = '<a href="http://twitter.com/23systems">' . __('Follow on Twitter','FLIR') . '</a>';
+                    $links[] = '<a href="http://www.facebook.com/pages/Austin-TX/23Systems-Web-Devsign/94195762502">' . __('Facebook Page','FLIR') . '</a>';
                 }
                 return $links;
             }
@@ -171,8 +175,8 @@
                         "defaultfancyfonts"  => $defaultFancyFonts,
                         );
                         $this->saveAdminOptions($this->adminOptionsName, $elementOptions);
-
-                        flirReload('elements');
+                        $g_flir_messages .= __('FLIR for WordPress HTML element settings have been save.  Please check your settings!','FLIR').'<br /><br />';
+                        //flirReload('elements');
                     }
                     elseif ($_POST['sub'] == 'config') {
                         $fontList               = array();
@@ -217,7 +221,8 @@
                         $this->saveAdminOptions($this->adminConfigName, $configOptions);
 
                         require('admin/flir.write.php');
-                        flirReload('config');
+                        $g_flir_messages .= __('FLIR for WordPress configuration has been saved. Please check your settings!','FLIR').'<br /><br />';
+                        //flirReload('config');
                     }
                     elseif ($_POST['sub'] == 'settings') {
                         $clearCache      = $_POST[clear_cache];
@@ -225,7 +230,8 @@
 
                         if (!empty($clearCache)) {
                             $this->clearCache($g_facelift_cache_path);
-                            flirReload('cache');
+                            $g_flir_messages .= __('FLIR for WordPress cache has been cleared.','FLIR').'<br /><br />';
+                            //flirReload('cache');
                         }
 
                         if (!empty($reInitialize)) {
@@ -234,7 +240,9 @@
                             delete_option($this->adminConfigName);
                             delete_option($this->adminInitName);
                             $this->flir-init;
-                            flirReload('reinit');
+                            $g_flir_messages .= __('FLIR for WordPress cache has been cleared.','FLIR').'<br /><br />';
+                            $g_flir_messages .= __('FLIR for WordPress re-initialized. Please check your settings!','FLIR').'<br /><br />';
+                            //flirReload('reinit');
                         }
                     }
                 }
@@ -267,11 +275,26 @@
                             break;
                     }
                 }
+
+                /**
+                * Get options to load in form
+                */
+                if (!empty($this->adminConfig)) { $flirConfig = $this->getAdminOptions($this->adminConfigName); }
+                if (!empty($this->adminOptions)) { $flirOptions = $this->getAdminOptions($this->adminOptionsName); }
             ?>
             <div class="wrap">
                 <h2><?php _e('FLIR for WordPress Configuration v0.9 (Facelift v2.0b3)', 'FLIR');?></h2>
                 <br style="clear:both;" />
                 <?php
+                    if ($g_flir_messages) {
+                        echo '<div id="flir_message" title="'.__('Settings Saved', 'FLIR').'" style="display:none">'.$g_flir_messages.'</div>';
+                        echo '<script type="text/javascript">';
+                        echo 'jQuery(function() {';
+                        echo '  jQuery("#flir_message").dialog({ buttons: { "Ok": function() { jQuery(this).dialog("close"); } },open: function() { jQuery(".ui-dialog").fadeOut(9000); },resizable:false,width: 480 });';
+                        echo '});';
+                        echo '</script>';
+                    }
+
                     require('admin/flir-config.php');
 
                 ?>
