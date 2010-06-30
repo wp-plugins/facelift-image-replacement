@@ -20,6 +20,8 @@
     $g_facelift_config_path = $g_facelift_path.'config-flir.php';
     $g_flir_messages = '';
 
+
+
     /*
     if (!function_exists("flirReload")) {
     function flirReload($update) {
@@ -90,6 +92,7 @@
             * PHP 5 Constructor
             */
             function __construct() {
+                wp_register_script('jquery_farbtastic', $g_flir_url.'/js/farbtastic.js',array('jquery'), '1.2'); // Farbatastic - colour wheel
                 add_filter( 'plugin_row_meta',array( &$this, 'RegisterFLIRLinks'),10,2);
                 add_action("admin_menu", array(&$this, "addAdminPages"));
                 add_action("admin_head", array(&$this, "addAdminHeader"));
@@ -99,6 +102,7 @@
                     add_action("init", array(&$this, "addScripts"));
                     add_action("wp_footer", array(&$this, 'flirAddFooter'));
                 }
+                add_action( 'admin_init', array( &$this, 'addAdminScripts' ) );
                 add_action( 'admin_footer', array( &$this, 'flirAddFooter' ) );
                 $this->adminInit = get_option($this->adminInitName);
 
@@ -176,7 +180,6 @@
                         );
                         $this->saveAdminOptions($this->adminOptionsName, $elementOptions);
                         $g_flir_messages .= __('FLIR for WordPress HTML element settings have been save.  Please check your settings!','FLIR').'<br /><br />';
-                        //flirReload('elements');
                     }
                     elseif ($_POST['sub'] == 'config') {
                         $fontList               = array();
@@ -222,27 +225,18 @@
 
                         require('admin/flir.write.php');
                         $g_flir_messages .= __('FLIR for WordPress configuration has been saved. Please check your settings!','FLIR').'<br /><br />';
-                        //flirReload('config');
                     }
                     elseif ($_POST['sub'] == 'settings') {
-                        $clearCache      = $_POST[clear_cache];
-                        $reInitialize     = $_POST[reinit_flir];
-
-                        if (!empty($clearCache)) {
+                        if (!empty($_POST['clear_cache'])) {
                             $this->clearCache($g_facelift_cache_path);
                             $g_flir_messages .= __('FLIR for WordPress cache has been cleared.','FLIR').'<br /><br />';
-                            //flirReload('cache');
                         }
 
-                        if (!empty($reInitialize)) {
+                        if (!empty($_POST['reinit_flir'])) {
                             $this->clearCache($g_facelift_cache_path);
-                            delete_option($this->adminOptionsName);
-                            delete_option($this->adminConfigName);
-                            delete_option($this->adminInitName);
-                            $this->flir-init;
+                            $this->flirInit;
                             $g_flir_messages .= __('FLIR for WordPress cache has been cleared.','FLIR').'<br /><br />';
                             $g_flir_messages .= __('FLIR for WordPress re-initialized. Please check your settings!','FLIR').'<br /><br />';
-                            //flirReload('reinit');
                         }
                     }
                 }
@@ -299,23 +293,49 @@
 
                 ?>
                 <br style="clear:both;" />
+                <div id="flir_color_picker" title="<?php _e('Color Picker','FLIR');?>" style="display:none;">
+                    <div id="color_picker"></div>
+                </div>
             </div>
             <?php
                 require('admin/flir-el.php');
                 require('admin/flir-settings.php');
+                /**
+                * TODO: Fix jQuery color picker dialog in section below.
+                */
             ?>
             <script type="text/javascript">
                 <!--
-                jQuery('.postbox .close-me').each(function() {
-                    jQuery(this).addClass("closed");
+                jQuery('.postbox .close-me').each(function($) {
+                    $(this).addClass("closed");
                 });
 
-                jQuery('#lbp_message').each(function() {
-                    jQuery(this).fadeOut(5000);
+                jQuery('.color-well').click(function() {
+                    jQuery("#flir_color_picker").dialog({ buttons: { "Ok": function() { jQuery(this).dialog("close"); } },resizable:false,width: 220 });
                 });
 
-                jQuery('.postbox h3').click( function() {
-                    jQuery(this).next('.toggle').slideToggle('fast');
+                jQuery('#lbp_message').each(function($) {
+                    $(this).fadeOut(5000);
+                });
+
+                jQuery('.postbox h3').click( function($) {
+                    $(this).next('.toggle').slideToggle('fast');
+                });
+
+                jQuery(document).ready(function($) {
+                    var farb = $.farbtastic('#color_picker');
+                    var picker = $('#color_picker').css('opacity', 0.25);
+                    var selected;
+                    $('.color-well')
+                    .each(function () { farb.linkTo(this); $(this).css('opacity', 0.75); })
+                    .focus(function() {
+                        if (selected) {
+                            $(selected).css('opacity', 0.75).removeClass('color-well-selected');
+                        }
+                        farb.linkTo(this);
+                        picker.css('opacity', 1);
+                        $(selected = this).css('opacity', 1).addClass('color-well-selected');
+                    });
                 });
 
                 function toggleVisibility(id) {
@@ -325,6 +345,24 @@
                     else
                         elmt.style.display = 'block';
                 }
+
+                <?php
+                    //   if ($elementList) {
+                ?>
+                // jQuery(document).ready(function($) {
+                <?php
+                    //       foreach ($elementList as $key => $value) {
+                ?>
+                //     $("#color_picker").farbtastic("#stroke_color_<?php echo $value; ?>");
+                //   $("#color_picker").farbtastic("#fill_color_a_<?php echo $value; ?>");
+                //     $("#color_picker").farbtastic("#fill_color_b_<?php echo $value; ?>");
+                <?php
+                    //    }
+                ?>
+                //  });
+                <?php
+                    //    }
+                ?>
                 //-->
             </script>
             <?php

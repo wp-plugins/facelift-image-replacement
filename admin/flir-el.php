@@ -55,6 +55,7 @@
                                                 }
                                         }?>
                                     </select>
+                                    
                                 </td>
                                 <td>
                                     <select name="flir_mode[]">
@@ -69,7 +70,97 @@
                                     </select>
                                 </td>
                                 <td><input type="checkbox" name="flir_elements_fancyfonts[]" value="<?php echo $element_value;?>"<?php if(!empty($elementFancyFonts)) {foreach ($elementFancyFonts as $key => $value) {if ($element_value == $value) echo ' checked="checked"';}}?> /></td>
-                                <td>Forthcoming</td>
+                                <td>
+                                
+                                    <!-- QUICKEFFECTS -->
+                                    <table width="100%" border="0" cellspacing="3" cellpadding="3">
+                                        <tr>
+                                            <td>Stroke</td>
+                                            <td><label>Width:
+                                                    <select name="stroke_width_<?php echo $element_value;?>" id="stroke_width_<?php echo $element_value;?>">
+                                                        <option value="1" selected="selected">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
+                                                        <option value="7">7</option>
+                                                        <option value="8">8</option>
+                                                        <option value="9">9</option>
+                                                        <option value="10">10</option>
+                                                    </select>px
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>
+                                            <label>Color: #
+                                                    <input type="text" name="stroke_color_<?php echo $element_value;?>" id="stroke_color_<?php echo $element_value;?>" value="#123456" class="color-well" />
+                                                </label> 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Fill (Pattern)</td>
+                                            <td><label>Fill Image Pattern
+                                                    <input type="file" name="fill_patter_<?php echo $element_value;?>n" id="fill_pattern_<?php echo $element_value;?>" />
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Fill (Gradient)</td>
+                                            <td><label>Color 1: #
+                                                    <input type="text" name="fill_color_a_<?php echo $element_value;?>" id="fill_color_a_<?php echo $element_value;?>" value="#654321" class="color-well" />
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td><label>Color 2: #
+                                                    <input type="text" name="fill_color_b_<?php echo $element_value;?>" id="fill_color_b_<?php echo $element_value;?>" value="#132654" class="color-well" />
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Drop Shadow</td>
+                                            <td><label>Opacity:
+                                                    <select name="drop_shadow_opacity_<?php echo $element_value;?>" id="drop_shadow_opacity_<?php echo $element_value;?>">
+                                                        <option value="1" selected="selected">1</option>
+                                                        <option value="2">2</option>
+                                                    </select>
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td><label>Sigma:
+                                                    <select name="drop_shadow_sigma_<?php echo $element_value;?>" id="drop_shadow_sigma_<?php echo $element_value;?>">
+                                                        <option value="1" selected="selected">1</option>
+                                                        <option value="2">2</option>
+                                                    </select>
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td><label>Offset Left:
+                                                    <select name="drop_shadow_offset_left_<?php echo $element_value;?>" id="drop_shadow_offset_left_<?php echo $element_value;?>">
+                                                        <option value="-2" selected="selected">-2</option>
+                                                        <option value="-1">-1</option>
+                                                        <option value="0">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                    </select>
+                                                </label></td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td><label>Offest Top:
+                                                    <select name="drop_shadow_offset_top_<?php echo $element_value;?>" id="drop_shadow_offset_top_<?php echo $element_value;?>">
+                                                        <option value="-2" selected="selected">-2</option>
+                                                        <option value="-1">-1</option>
+                                                        <option value="0">0</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                    </select>
+                                                </label></td>
+                                        </tr>
+                                    </table>
+                                </td>
                             </tr>
                             <?php
                             }

@@ -101,7 +101,7 @@
                     $dir_handle = opendir($dirname);
                 } 
                 while($file = readdir($dir_handle)) { 
-                    if($file != "." && $file != ".." && $file != '.svn') { 
+                    if($file != "." && $file != ".." && $file != '.svn' && $file != 'index.html') { 
                         if(!is_dir($dirname."/".$file)){
                             unlink ($dirname."/".$file);
                         } 

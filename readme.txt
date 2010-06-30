@@ -1,7 +1,7 @@
 === Facelift Image Replacment (FLIR) ===
 Contributors: dzappone, cmawhorter
 Donate link: http://www.23systems.net/donate/
-Tags: flir, titles, posts, images, themes, facelift, text, headings
+Tags: typography, text replacement, flir, titles, posts, images, themes, facelift, text, headings, fonts, formatting
 Requires at least: 2.8
 Tested up to: 3.0
 Stable tag: 0.8.9.2
@@ -58,6 +58,19 @@ If GD is not installed on your server you will have to recompile PHP to include 
 2. After Facelift Image Replacement
 
 == Changelog ==
+
+= 0.8.9.5 =
+
+* Changed defualt cache behavior to reduce clutter in cache directory
+ * By default cache cleanup was disabled now runs every 10 times
+ * Cache keep time was set to 1 week, now set to every 6 hours
+ * So by default every tenth time FLIR is invoked it will run cache cleanup and delete file older than 6 hours
+ * This should reduce problems with cleaning the cache or disabling the plugin.
+* Changed initialization function for work with less overhead and the need to reload the page to reflect the changes.
+* Improved interface in admin panel.
+ * Added better feedback for users in the form of meesage dialogs.
+* Added QuickEffects plugin option
+ * Includes stroke, pattern fill, gradient fill, and drop shadow effects
 
 = 0.8.9.2 =
 

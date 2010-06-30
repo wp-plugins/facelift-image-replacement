@@ -17,8 +17,8 @@
         <div class="inside">
             <form action="?page=FLIR" method="post" id="flir_config" name="flir_config">
                 <?php 
-                    if (!empty($this->adminConfig)) {
-                        $flirConfig         		= $this->getAdminOptions($this->adminConfigName);
+//                    if (!empty($this->adminConfig)) {
+                        $flirConfig             = $this->getAdminOptions($this->adminConfigName);
                         $unknownFontSize        = $flirConfig['unknown_font_size'];
                         $cacheCleanupFrequency  = $flirConfig['cache_cleanup_frequency'];
                         $cacheKeepTime          = $flirConfig['cache_keep_time'];
@@ -31,7 +31,7 @@
                         $imagemagickPath        = $flirConfig['imagemagick_path'];
                         $dropIE                 = $flirConfig['drop_ie'];
                         $elementList            = $flirConfig['element_types'];
-                    }
+                    //}
                 ?>
                 <table class="form-table">
                     <tr valign="top"><th scope="row"><strong><?php _e('Unknown Font Size',"FLIR"); ?>: 
@@ -63,7 +63,7 @@
                                 <option value="168"<?php if ($unknownFontSize=='168') echo ' selected="selected"'?>>168 pixels</option>
                                 <option value="180"<?php if ($unknownFontSize=='180') echo ' selected="selected"'?>>180 pixels</option>
                             </select>
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_unknown_font_size_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_unknown_font_size_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_unknown_font_size_tip">
                             <?php _e('If the font size cannot be determined automatically the font size will default to this (in pixels).<br /><strong><em>Default: 16</em></strong>',"FLIR"); ?></div>
                         </td>
@@ -86,7 +86,7 @@
                                 <option value="5000"<?php if ($cacheCleanupFrequency=='5000') echo ' selected="selected"'?>>Every 5000 times</option>
                                 <option value="10000"<?php if ($cacheCleanupFrequency=='10000') echo ' selected="selected"'?>>Every 10000 times</option>
                             </select>
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_cache_cleanup_frequency_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_cache_cleanup_frequency_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_cache_cleanup_frequency_tip"><?php _e('All generated images are cached. If you have a large site with many different bits of text being replaced, this may lead to a lot of old, outdated images in the cache.  This will allow you to specify how often to run the cache cleanup in relation to how often FLIR is executed.<br /><strong><em>Default: Never</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
@@ -105,19 +105,19 @@
                                 <option value="15768000"<?php if ($cacheKeepTime=='15768000') echo ' selected="selected"'?>>6 Months</option>
                                 <option value="31536000"<?php if ($cacheKeepTime=='31536000') echo ' selected="selected"'?>>1 Year</option>
                             </select>
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_cache_keep_time_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_cache_keep_time_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_cache_keep_time_tip"><?php _e('When the cache cleanup runs, cached images that are older than the time provided here will be deleted (Unix timestamp).  This setting is irrelvent when Cache Cleanup Frequency is disabled.<br /><strong><em>Default: 1 Week</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
                     <tr valign="top"><th scope="row"><strong><?php _e('Single Directory Cache',"FLIR"); ?>: </strong></th><td valign="top">
                             <input type="checkbox" name="cache_single_dir" value="true"<?php if($cacheSingleDir == 'true') {echo ' checked="checked"';}?> />
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_cache_single_dir_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_cache_single_dir_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_cache_single_dir_tip"><?php _e('Check this to not create sub-directories to store cached files (good for small sites)<br /><strong><em>Default: unchecked</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
                     <tr valign="top"><th scope="row"><strong><?php _e('Horizontal Text Bounds',"FLIR"); ?>: </strong></th><td valign="top">
                             <input name="horizontal_text_bounds" type="text" value="<?php if (empty($horizontalTextBounds)) { echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]{}()_'; } else {echo $horizontalTextBounds;}?>" size="32" maxlength="254" />
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_horizontal_text_bounds_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_horizontal_text_bounds_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_horizontal_text_bounds_tip"><?php _e('This will only be used if some fonts have characters that will extend below the baseline. For example, p, q, or y all have tails that extend below the baseline.  The text will be used to attempt to figure out the lowest and highest point of all the characters. This will create a uniform height across all generated images for a particular font size.  You should not have to change this value unless you are working in a language that does not use the a-z alphabet or you are using a highly unusual font.<br /><strong><em>Default: A-Za-z</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
@@ -135,7 +135,7 @@
                                 <option value="scriptaculous"<?php if ($javascriptMethod=='scriptaculous') echo ' selected="selected"'?>>Scriptaculous</option>
                             </select>
                             <input type="checkbox" name="external_javascript" value="1"<?php if($externalJavaScript == 1) {echo ' checked="checked"';}?> /> Use external JavaScript library.
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_javascript_method_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a> 
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_javascript_method_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a> 
                             <div class="flir-tip" id="flir_javascript_method_tip"><?php _e('Choose <em>Automatic</em> or one of three JavaScript libraries to assist in the rendering.  <em>jQuery</em> seems to be the fastest but you may already be loading the <em>prototype</em> or <em>scriptaculous</em> librares and prefer one of those to minimize overhead.  <em>Automatic</em> does not use any JavaScript library but will automatically replace all the elements specified in Element Types below using the default font.<br /><strong style="color:#900"><em>Note: if you wish to specify which elements to replace or use FancyFonts you must use a method other than Automatic.</em></strong><br /><strong><em>Default: Automatic</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
@@ -157,7 +157,7 @@
                             <select name="fonts_list[]" size="8" multiple="multiple" style="height:120px;">
                                 <?php if (!empty($baseFontsList)) {foreach ( $baseFontsList as $key=>$value) {echo '<option ';if ($this->setSelected($value,$fontsList)) echo 'selected="selected" '; echo 'value="'.$value.'">'.ucfirst($key).' ('.$value.')</option>'.$this->eol;}}?>
                             </select>
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_fonts_list_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_fonts_list_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_fonts_list_tip"><?php _e('This lists all the fonts in the <code>facelift/fonts</code> directory by font array key name and font name. If you ahve a lot of fonts you can use CTRL+Click to choose a smaller selection of fonts to use in the Elements to Replace section.<br /><strong><em>Default: All fonts in font directory</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
@@ -165,25 +165,25 @@
                             <select name="font_default">
                                 <?php if (!empty($baseFontsList)) {foreach ( $baseFontsList as $key=>$value) {echo '<option ';if ($fontDefault==$value) echo 'selected="selected" '; echo 'value="'.$value.'">'.ucfirst($key).' ('.$value.')</option>'.$this->eol;}}?>
                             </select>
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_font_default_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_font_default_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_font_default_tip"><?php _e('If the font cannot be determined automatically or is not specified in the Elements to Replace section the rendered font will default to the one selected here.<br /><strong><em>Default: First font in font directory</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
                     <tr valign="top"><th scope="row"><strong><?php _e('ImageMagick Path',"FLIR"); ?>: </strong></th><td valign="top">
                             <input name="imagemagick_path" type="text" value="<?php if (empty($imagemagickPath)) { echo '/usr/bin/'; } else {echo $imagemagickPath;}?>" size="32" maxlength="254" />
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_imagemagick_path_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_imagemagick_path_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_imagemagick_path_tip"><?php _e('Set this to the location of your ImageMagick binaries (with a trailing slash).  Required only if you are using Fancy Fonts or Quick Effects (see <a href="http://facelift.mawhorter.net/doc/plugins" title="Facelift Plugins" target="_blank">Facelift Plugins</a> for more details.)<br /><strong><em>Default: /usr/bin/</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
                     <tr valign="top"><th scope="row"><strong><?php _e('Disable FLIR for IE 6',"FLIR"); ?>: </strong></th><td valign="top">
                             <input type="checkbox" name="drop_ie" value="1"<?php if($dropIE == 1) {echo ' checked="checked"';}?> />
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_drop_ie_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_drop_ie_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_drop_ie_tip"><?php _e('Check this to disable for IE 6<br /><strong><em>Default: unchecked</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
                     <tr valign="top"><th scope="row"><strong><?php _e('Element Types to Replace',"FLIR"); ?>: </strong></th><td valign="top">
                             <input name="element_types" type="text" value="<?php if (empty($elementList)) { echo 'h1,h2,h3,h4,h5'; } else {echo implode(",", $elementList);}?>" size="32" maxlength="254" />
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_element_types_tip');"><img src="<?php echo $g_flir_url.'/css/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>"  /></a>
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_element_types_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>"  /></a>
                             <div class="flir-tip" id="flir_element_types_tip"><?php _e('This list the elements to replace. If using Automatic the default font will be used for all elements.  If using jQuery, Scriptaculous or Prototype you can specify specific fonts and modes in the <strong>Elements to Replace</strong> section, which will only appear if using a JavaScript method other than Automatic. You can also specify more granular elements to replace such as <code>div#sidebar a</code> to replace the links in your sidebar.<em>Remove elements you do not intend to replace.</em><br /><strong><em>Example: h1,h2,h3,h4,h5,h6,small,blockquote,div#postinfo,p.date,div#sidebar a</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 

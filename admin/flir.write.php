@@ -22,8 +22,10 @@
     $flirConfig_data .= "define('CACHE_DIR', '".$cacheDir."');".$this->eol();
     $flirConfig_data .= "define('FONTS_DIR', '".$fontDir."');".$this->eol();
     $flirConfig_data .= "define('PLUGIN_DIR', '".$pluginDir."');".$this->eol();
+    
     $flirConfig_data .= "define('RENDER_PLUGIN_DIR', PLUGIN_DIR.'/render');".$this->eol();
     $flirConfig_data .= "define('PREPROC_PLUGIN_DIR', PLUGIN_DIR.'/pre');".$this->eol();
+    $flirConfig_data .= "define('POSTPROC_AUTORUN', 'supercache');".$this->eol();
     $flirConfig_data .= "define('POSTPROC_PLUGIN_DIR', PLUGIN_DIR.'/post');".$this->eol().$this->eol();
 
     $flirConfig_data .= "define('HBOUNDS_TEXT', '".$horizontalTextBounds."'); // see http://facelift.mawhorter.net/docs/".$this->eol().$this->eol();
