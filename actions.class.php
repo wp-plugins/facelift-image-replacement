@@ -21,7 +21,7 @@
             * load JavaScripts scripts for FLIR to work and if admin panel load additional JavaScript for jQueryUI
             */
             function addScripts() {
-                global $g_facelift_url, $g_flir_method,$g_flir_url;
+                global $g_facelift_url, $g_flir_method, $g_flir_url;
 
                 if (!is_admin()) {
                     wp_enqueue_script('jquery','','','1.4.2',true);
@@ -63,11 +63,13 @@
             }
 
             function addAdminScripts() {
+                global $g_flir_url;
                 wp_enqueue_style('farbtastic');
                 wp_enqueue_script('jquery','','','1.4.2',true);
-                wp_enqueue_script('jquery-ui-core','','','1.8',true);
-                wp_enqueue_script('jquery-ui-dialog','','','1.8',true);
-                wp_enqueue_script('farbtastic', '', array( 'jquery' ), '1.2', false); 
+                wp_enqueue_script('jquery-ui-core','','','1.7.3',true);
+                wp_enqueue_script('jquery-ui-dialog','','','1.7.3',true);
+                wp_enqueue_script('farbtastic', '', array( 'jquery' ), '1.2', false);
+                wp_enqueue_script('jquery-ui-slider', $g_flir_url.'/admin/ui.slider.js', array( 'jquery' ), '1.7.3', true);
             }
 
             /**

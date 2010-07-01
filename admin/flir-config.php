@@ -8,7 +8,7 @@
             <?php _e( 'Like many developers I spend a lot of my spare time working on WordPress plugins and themes and any donation to the cause is appreciated.  I know a lot of other developers do the same and I try to donate to them whenever I can.  As a developer I greatly appreciate any donation you can make to help support further development of quality plugins and themes for WordPress.  <em>You have my sincere thanks and appreciation for using FLIR ofr WordPress</em>.','FLIR' ); ?>
         </div>
     </div>
-</div>                                                                
+</div>
 
 
 <div id="poststuff" class="flir">
@@ -16,7 +16,7 @@
         <h3><?php _e('FLIR for WordPress Settings',"FLIR"); ?>: </h3>
         <div class="inside">
             <form action="?page=FLIR" method="post" id="flir_config" name="flir_config">
-                <?php 
+                <?php
 //                    if (!empty($this->adminConfig)) {
                         $flirConfig             = $this->getAdminOptions($this->adminConfigName);
                         $unknownFontSize        = $flirConfig['unknown_font_size'];
@@ -34,7 +34,7 @@
                     //}
                 ?>
                 <table class="form-table">
-                    <tr valign="top"><th scope="row"><strong><?php _e('Unknown Font Size',"FLIR"); ?>: 
+                    <tr valign="top"><th scope="row"><strong><?php _e('Unknown Font Size',"FLIR"); ?>:
                             </strong></th><td valign="top">
                             <select name="unknown_font_size">
                                 <option value="6"<?php if ($unknownFontSize=='6') echo ' selected="selected"'?>>6 pixels</option>
@@ -121,7 +121,7 @@
                             <div class="flir-tip" id="flir_horizontal_text_bounds_tip"><?php _e('This will only be used if some fonts have characters that will extend below the baseline. For example, p, q, or y all have tails that extend below the baseline.  The text will be used to attempt to figure out the lowest and highest point of all the characters. This will create a uniform height across all generated images for a particular font size.  You should not have to change this value unless you are working in a language that does not use the a-z alphabet or you are using a highly unusual font.<br /><strong><em>Default: A-Za-z</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
-                    <!--			<tr valign="top"><th scope="row"><strong><?php// _e('Font Discovery',"FLIR"); ?>: </strong></th>
+                    <!--            <tr valign="top"><th scope="row"><strong><?php// _e('Font Discovery',"FLIR"); ?>: </strong></th>
                     <td valign="top">
                     <input type="checkbox" name="font_discovery" value="1" />
                     <br /><?php _e('If the font size cannot be determined automatically the size will default to this (in pixels).',"FLIR"); ?></td>
@@ -135,7 +135,7 @@
                                 <option value="scriptaculous"<?php if ($javascriptMethod=='scriptaculous') echo ' selected="selected"'?>>Scriptaculous</option>
                             </select>
                             <input type="checkbox" name="external_javascript" value="1"<?php if($externalJavaScript == 1) {echo ' checked="checked"';}?> /> Use external JavaScript library.
-                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_javascript_method_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a> 
+                            <a class="flir-info" title="<?php _e('Click for Help!', 'FLIR')?>" onclick="toggleVisibility('flir_javascript_method_tip');"><img src="<?php echo $g_flir_url.'/admin/information.png'?>" alt="<?php _e('Click for Help!', 'FLIR'); ?>" /></a>
                             <div class="flir-tip" id="flir_javascript_method_tip"><?php _e('Choose <em>Automatic</em> or one of three JavaScript libraries to assist in the rendering.  <em>jQuery</em> seems to be the fastest but you may already be loading the <em>prototype</em> or <em>scriptaculous</em> librares and prefer one of those to minimize overhead.  <em>Automatic</em> does not use any JavaScript library but will automatically replace all the elements specified in Element Types below using the default font.<br /><strong style="color:#900"><em>Note: if you wish to specify which elements to replace or use FancyFonts you must use a method other than Automatic.</em></strong><br /><strong><em>Default: Automatic</em></strong>',"FLIR"); ?></div></td>
                     </tr>
 
@@ -193,4 +193,4 @@
             </form>
         </div>
     </div>
-			</div>
+            </div>

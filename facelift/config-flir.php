@@ -7,25 +7,25 @@
 * It is available from http://facelift.mawhorter.net/
 */
 define('ALLOWED_DOMAIN', false); // ex: 'example.com', 'subdomain.domain.com', '.allsubdomains.com', false disabled
-define('UNKNOWN_FONT_SIZE', 16); // in pixels
+define('UNKNOWN_FONT_SIZE', ); // in pixels
 
-define('CACHE_CLEANUP_FREQ', -1); // -1 disable, 1 everytime, 10 would be about 1 in 10 times this script runs (higher number decreases frequency)
-define('CACHE_KEEP_TIME', 604800); // 604800: 7 days
-define('CACHE_SINGLE_DIR', false); // don't create subdirs to store cached files (good for small sites)
+define('CACHE_CLEANUP_FREQ', ); // -1 disable, 1 everytime, 10 would be about 1 in 10 times this script runs (higher number decreases frequency)
+define('CACHE_KEEP_TIME', ); // 604800: 7 days
+define('CACHE_SINGLE_DIR', ); // don't create subdirs to store cached files (good for small sites)
 
 define('FONT_DISCOVERY', false);
 
-define('CACHE_DIR', 'cache');
-define('FONTS_DIR', 'fonts');
-define('PLUGIN_DIR', 'plugins');
+define('CACHE_DIR', '');
+define('FONTS_DIR', '');
+define('PLUGIN_DIR', '');
 define('RENDER_PLUGIN_DIR', PLUGIN_DIR.'/render');
 define('PREPROC_PLUGIN_DIR', PLUGIN_DIR.'/pre');
 define('POSTPROC_AUTORUN', 'supercache');
 define('POSTPROC_PLUGIN_DIR', PLUGIN_DIR.'/post');
 
-define('HBOUNDS_TEXT', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]{}()_'); // see http://facelift.mawhorter.net/docs/
+define('HBOUNDS_TEXT', ''); // see http://facelift.mawhorter.net/docs/
 
-define('IM_EXEC_PATH', '/usr/bin/');  // ImageMagick binaries path
+define('IM_EXEC_PATH', '');  // ImageMagick binaries path
 
 /**
 * Each font you want to use should have an entry in the fonts array.
@@ -35,23 +35,12 @@ define('IM_EXEC_PATH', '/usr/bin/');  // ImageMagick binaries path
 * @var mixed
 */
 $fonts = array();
-$fonts['baarssophia'] 	= 'baars_sophia.ttf'; // baarssophia 
-$fonts['bluehighwaycond'] 	= 'blue_highway_cond.ttf'; // bluehighwaycond 
-$fonts['bluehighwayregular'] 	= 'Blue_Highway_regular.ttf'; // bluehighwayregular 
-$fonts['comt'] 	= 'com4t.ttf'; // comt 
-$fonts['deliciousroman'] 	= 'Delicious_Roman.otf'; // deliciousroman 
-$fonts['diavlobook'] 	= 'Diavlo_Book.otf'; // diavlobook 
-$fonts['fontinregular'] 	= 'Fontin_Regular.ttf'; // fontinregular 
-$fonts['hoperound'] 	= 'HopeRound.ttf'; // hoperound 
-$fonts['lidostf'] 	= 'LidoSTF.otf'; // lidostf 
-$fonts['marlonbook'] 	= 'Marlon_book.ttf'; // marlonbook 
-$fonts['qlassiktb'] 	= 'Qlassik_TB.otf'; // qlassiktb 
 /**
 * The font will default to the following (put your most common font here).
 * 
 * @var mixed
 */
-$fonts['default'] 	= 'Qlassik_TB.otf';
+$fonts['default'] 	= '';
 
 // pipe-separated list of processing plugins to autorun
 // modify settings by including them in querystring style

@@ -44,22 +44,22 @@
 
             if(is_dir($dirname)){
                 $dir_handle = opendir($dirname);
-            } 
-            while($file = readdir($dir_handle)) { 
-                if($file != "." && $file != "..") { 
+            }
+            while($file = readdir($dir_handle)) {
+                if($file != "." && $file != "..") {
                     if(!is_dir($dirname."/".$file)){
                         unlink ($dirname."/".$file);
-                    } 
+                    }
                     else {
                         $this->clearCache($dirname."/".$file);
-                    } 
-                } 
-            } 
+                    }
+                }
+            }
             closedir($dir_handle);
-            if ($dirname != $g_facelift_cache_path){ 
+            if ($dirname != $g_facelift_cache_path){
                 rmdir($dirname);
             }
-            return true; 
+            return true;
         }
     }
 
@@ -74,7 +74,7 @@
 
             /**
             * The name the options are saved under in the database
-            * 
+            *
             * @var mixed
             */
             var $adminOptionsName = "wp_flir_options";
@@ -113,7 +113,7 @@
 
             /**
             * Retrieves the options from the database.
-            * 
+            *
             * @param mixed $optionsname
             * @return array
             */
@@ -130,7 +130,7 @@
 
             /**
             * Saves the admin options to the database using the name of option and the options as params
-            * 
+            *
             * @param mixed $optionsname
             * @param mixed $options
             */
@@ -242,7 +242,7 @@
                 }
                 /**
                 * Notify FLIR status
-                * 
+                *
                 * @var mixed
                 */
                 $flirStatus     = $_GET[updated];
@@ -252,7 +252,7 @@
                         case 'elements':
                             echo '<div id="message" class="updated fade">';
                             _e('<p><strong>FLIR Elements Saved</strong></p></div>',"FLIR");
-                            break;  
+                            break;
                         case 'config':
                             echo '<div id="message" class="updated fade">';
                             _e('<p><strong>FLIR Configuration Saved</strong></p></div>',"FLIR");
@@ -293,7 +293,7 @@
 
                 ?>
                 <br style="clear:both;" />
-                <div id="flir_color_picker" title="<?php _e('Color Picker','FLIR');?>" style="display:none;">
+                <div id="flir_color_picker" title="<?php _e('Color Picker','FLIR');?>" style="display: none;">
                     <div id="color_picker"></div>
                 </div>
             </div>
@@ -311,7 +311,15 @@
                 });
 
                 jQuery('.color-well').click(function() {
-                    jQuery("#flir_color_picker").dialog({ buttons: { "Ok": function() { jQuery(this).dialog("close"); } },resizable:false,width: 220 });
+                    jQuery("#flir_color_picker").dialog({
+                        title: '<?php _e('Choose color','FLIR') ?>',
+                        show: 'blind',
+                        hide: 'explode',
+                        buttons: { "Ok": function() { jQuery(this).dialog("close"); } },
+                        resizable:false,
+                        width: 220
+                    });
+                    jQuery("#flir_color_picker").dialog("open");
                 });
 
                 jQuery('#lbp_message').each(function($) {
@@ -337,6 +345,33 @@
                         $(selected = this).css('opacity', 1).addClass('color-well-selected');
                     });
                 });
+
+                <?php
+                    if ($elementList) {
+                        $strokeElements = array();
+                        foreach ($elementList as $key => $value) {
+                            $strokeElements[] = '#stroke_width_'.$elementList[$key];
+                            $strokeSlider[] = '#stroke_width_slider_'.$elementList[$key];
+                        }
+                        $strokeElements = implode(',',$strokeElements);
+                        $strokeSlider = implode(',',$strokeSlider);
+                    }
+                ?>
+                jQuery(document).ready(function() {
+                    jQuery("<?php echo $strokeSlider; ?>").slider({
+                        value:2,
+                        min: 1,
+                        max: 10,
+                        step: 1,
+                        slide: function(event, ui) {
+                            $("<?php echo $strokeElements; ?>").val(ui.value);
+                        }
+                    });
+                    //$("#red").slider("value", 255);
+                    //$("#green").slider("value", 140);
+                    //$("#blue").slider("value", 60);
+                });
+
 
                 function toggleVisibility(id) {
                     var elmt = document.getElementById(id);
